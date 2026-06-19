@@ -1,0 +1,236 @@
+/* ── Sale Deed Flowchart ── */
+.chart-container {
+  padding: var(--space-xl) 0;
+  overflow-x: auto;
+  animation: fadeInUp 0.5s ease-out;
+}
+
+.chart-wrapper {
+  min-width: 800px;
+  max-width: 1000px;
+  margin: 0 auto;
+  position: relative;
+}
+
+/* Party Cards (Seller / Buyer) */
+.chart-parties {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: relative;
+  margin-bottom: 80px;
+}
+
+.chart-party-card {
+  width: 320px;
+  background: var(--color-bg-surface);
+  backdrop-filter: blur(10px);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-lg);
+  position: relative;
+  z-index: 2;
+  box-shadow: var(--shadow-md);
+  transition: transform var(--transition-spring);
+}
+
+.chart-party-card:hover {
+  transform: translateY(-5px);
+  border-color: var(--color-border-accent);
+  box-shadow: var(--shadow-lg);
+}
+
+.chart-party-card.seller {
+  border-top: 4px solid var(--color-error);
+}
+
+.chart-party-card.buyer {
+  border-top: 4px solid var(--color-success);
+}
+
+.chart-party-header {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  margin-bottom: var(--space-md);
+  font-family: var(--font-display);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-size: 0.875rem;
+}
+
+.chart-party-card.seller .chart-party-header { color: var(--color-error); }
+.chart-party-card.buyer .chart-party-header { color: var(--color-success); }
+
+.chart-party-name {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--color-text-primary);
+  margin-bottom: var(--space-xs);
+}
+
+.chart-party-detail {
+  font-size: 0.8125rem;
+  color: var(--color-text-secondary);
+  line-height: 1.5;
+}
+
+/* Transaction Flow (Amount arrow) */
+.chart-transaction {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: calc(100% - 640px); /* 100% - (2 * card width) */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  z-index: 1;
+}
+
+.chart-amount-badge {
+  background: linear-gradient(135deg, var(--color-accent-dark), var(--color-accent));
+  color: var(--color-bg-primary);
+  padding: var(--space-sm) var(--space-lg);
+  border-radius: var(--radius-full);
+  font-family: var(--font-display);
+  font-size: 1.25rem;
+  font-weight: 800;
+  box-shadow: var(--shadow-accent);
+  margin-bottom: -15px;
+  z-index: 3;
+  position: relative;
+  white-space: nowrap;
+}
+
+.chart-arrow-horizontal {
+  width: 100%;
+  height: 2px;
+  background: var(--color-accent);
+  position: relative;
+}
+
+.chart-arrow-horizontal::after {
+  content: '';
+  position: absolute;
+  right: -5px;
+  top: 50%;
+  transform: translateY(-50%);
+  border-left: 10px solid var(--color-accent);
+  border-top: 6px solid transparent;
+  border-bottom: 6px solid transparent;
+}
+
+/* Property & Registration Nodes */
+.chart-node {
+  width: 500px;
+  margin: 0 auto 80px;
+  background: var(--color-bg-surface);
+  backdrop-filter: blur(10px);
+  border: 1px solid var(--color-info);
+  border-radius: var(--radius-lg);
+  padding: var(--space-lg);
+  position: relative;
+  box-shadow: 0 0 20px rgba(99, 102, 241, 0.1);
+  transition: transform var(--transition-spring);
+}
+
+.chart-node:hover {
+  transform: scale(1.02);
+  box-shadow: 0 0 30px rgba(99, 102, 241, 0.2);
+}
+
+.chart-node.registration {
+  border-color: var(--color-processing);
+  box-shadow: 0 0 20px rgba(139, 92, 246, 0.1);
+  margin-bottom: 0;
+}
+
+.chart-node.registration:hover {
+  box-shadow: 0 0 30px rgba(139, 92, 246, 0.2);
+}
+
+.chart-node-header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-sm);
+  margin-bottom: var(--space-md);
+  font-family: var(--font-display);
+  font-size: 1.125rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding-bottom: var(--space-sm);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.chart-node:not(.registration) .chart-node-header { color: var(--color-info); }
+.chart-node.registration .chart-node-header { color: var(--color-processing); }
+
+.chart-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-md);
+}
+
+.chart-grid.full {
+  grid-template-columns: 1fr;
+}
+
+.chart-field {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.chart-label {
+  font-size: 0.75rem;
+  color: var(--color-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.chart-value {
+  font-size: 0.9375rem;
+  font-weight: 500;
+  color: var(--color-text-primary);
+}
+
+/* Vertical connections */
+.chart-connection-vertical {
+  position: absolute;
+  left: 50%;
+  top: -80px;
+  width: 2px;
+  height: 80px;
+  background: var(--color-border);
+}
+
+.chart-connection-vertical::after {
+  content: '';
+  position: absolute;
+  bottom: -5px;
+  left: 50%;
+  transform: translateX(-50%);
+  border-top: 10px solid var(--color-border);
+  border-left: 6px solid transparent;
+  border-right: 6px solid transparent;
+}
+
+/* Fallback state */
+.chart-empty {
+  text-align: center;
+  padding: var(--space-3xl);
+  background: var(--color-bg-elevated);
+  border: 1px dashed var(--color-border);
+  border-radius: var(--radius-lg);
+  color: var(--color-text-secondary);
+}
+
+.chart-empty svg {
+  margin-bottom: var(--space-md);
+  color: var(--color-text-muted);
+  opacity: 0.5;
+}

@@ -1,0 +1,195 @@
+/* ── Status Tracker ── */
+.status-tracker {
+  max-width: 720px;
+  margin: 0 auto;
+  animation: fadeInUp 0.6s ease-out;
+}
+
+.status-header {
+  text-align: center;
+  margin-bottom: var(--space-2xl);
+}
+
+.status-header h2 {
+  font-family: var(--font-display);
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: var(--color-text-primary);
+  margin-bottom: var(--space-sm);
+}
+
+.status-header p {
+  color: var(--color-text-secondary);
+}
+
+.status-file-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-sm);
+  padding: var(--space-sm) var(--space-md);
+  background: var(--color-bg-elevated);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-full);
+  font-size: 0.8125rem;
+  color: var(--color-text-secondary);
+  margin-top: var(--space-md);
+}
+
+.status-file-badge svg {
+  color: var(--color-accent);
+}
+
+/* Pipeline Steps */
+.status-pipeline {
+  position: relative;
+  padding: var(--space-md) 0;
+}
+
+.status-step {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-lg);
+  position: relative;
+  padding-bottom: var(--space-xl);
+}
+
+.status-step:last-child {
+  padding-bottom: 0;
+}
+
+/* Connecting line */
+.status-step:not(:last-child)::after {
+  content: '';
+  position: absolute;
+  left: 23px;
+  top: 48px;
+  bottom: 0;
+  width: 2px;
+  background: var(--color-border);
+  transition: background var(--transition-slow);
+}
+
+.status-step.completed:not(:last-child)::after {
+  background: linear-gradient(180deg, var(--color-success), var(--color-success));
+}
+
+.status-step.active:not(:last-child)::after {
+  background: linear-gradient(180deg, var(--color-processing), var(--color-border));
+}
+
+/* Step circle */
+.status-step-circle {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: all var(--transition-base);
+  border: 2px solid var(--color-border);
+  background: var(--color-bg-secondary);
+  color: var(--color-text-muted);
+}
+
+.status-step.completed .status-step-circle {
+  border-color: var(--color-success);
+  background: var(--color-success-glow);
+  color: var(--color-success);
+  box-shadow: 0 0 15px rgba(16, 185, 129, 0.2);
+}
+
+.status-step.active .status-step-circle {
+  border-color: var(--color-processing);
+  background: var(--color-processing-glow);
+  color: var(--color-processing);
+  box-shadow: 0 0 15px rgba(139, 92, 246, 0.2);
+  animation: pulse 2s ease-in-out infinite;
+}
+
+.status-step-spinner {
+  width: 20px;
+  height: 20px;
+  border: 2px solid rgba(139, 92, 246, 0.3);
+  border-top-color: var(--color-processing);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+/* Step content */
+.status-step-content {
+  flex: 1;
+  padding-top: var(--space-xs);
+}
+
+.status-step-title {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--color-text-primary);
+  margin-bottom: var(--space-xs);
+  transition: color var(--transition-fast);
+}
+
+.status-step.pending .status-step-title {
+  color: var(--color-text-muted);
+}
+
+.status-step-desc {
+  font-size: 0.8125rem;
+  color: var(--color-text-muted);
+  line-height: 1.5;
+}
+
+.status-step.active .status-step-desc {
+  color: var(--color-text-secondary);
+}
+
+.status-step-time {
+  font-size: 0.75rem;
+  color: var(--color-text-muted);
+  margin-top: var(--space-xs);
+  font-style: italic;
+}
+
+/* Completion message */
+.status-complete-msg {
+  margin-top: var(--space-xl);
+  padding: var(--space-lg);
+  background: var(--color-success-glow);
+  border: 1px solid rgba(16, 185, 129, 0.3);
+  border-radius: var(--radius-lg);
+  text-align: center;
+  animation: scaleIn 0.5s ease-out;
+}
+
+.status-complete-msg h3 {
+  font-family: var(--font-display);
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--color-success);
+  margin-bottom: var(--space-sm);
+}
+
+.status-complete-msg p {
+  font-size: 0.875rem;
+  color: var(--color-text-secondary);
+  margin-bottom: var(--space-md);
+}
+
+.status-view-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-sm);
+  padding: var(--space-sm) var(--space-xl);
+  background: var(--color-success);
+  color: white;
+  font-weight: 600;
+  border-radius: var(--radius-md);
+  font-size: 0.9375rem;
+  transition: all var(--transition-fast);
+}
+
+.status-view-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
+}
