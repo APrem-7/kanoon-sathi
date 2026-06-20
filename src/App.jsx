@@ -5,7 +5,6 @@ import StatusTracker from './components/Processing/StatusTracker';
 import TextViewer from './components/OCRResult/TextViewer';
 import SaleDeedChart from './components/OCRResult/SaleDeedChart';
 import { parseSaleDeed } from './utils/saleDeedParser';
-import { simulateOCR } from './api/client';
 import './index.css';
 
 function App() {
@@ -30,16 +29,7 @@ function App() {
     setCurrentView('results');
   };
 
-  // For testing/demo purposes: simulate a webhook call
-  const triggerSimulation = async () => {
-    if (!uploadInfo?.serialNo) return;
-    try {
-      await simulateOCR(uploadInfo.serialNo, '');
-      console.log('Simulated OCR result injected.');
-    } catch (err) {
-      console.error('Simulation failed', err);
-    }
-  };
+
 
   // Allow resetting flow
   const handleReset = () => {
@@ -70,16 +60,6 @@ function App() {
                 uploadInfo={uploadInfo} 
                 onComplete={handleProcessingComplete} 
               />
-              
-              {/* Dev Helper - Hidden in prod */}
-              <div style={{ marginTop: '50px', textAlign: 'center', opacity: 0.3 }}>
-                <button 
-                  onClick={triggerSimulation}
-                  style={{ fontSize: '10px', background: 'transparent', border: '1px solid #333', padding: '4px 8px', borderRadius: '4px' }}
-                >
-                  Force Webhook (Dev)
-                </button>
-              </div>
             </div>
           )}
 

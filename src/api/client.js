@@ -49,23 +49,6 @@ export async function getAllJobs() {
 }
 
 /**
- * Simulate OCR result (for testing)
- */
-export async function simulateOCR(serialNo, text) {
-  const response = await fetch(`${API_BASE}/simulate-ocr`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ serial_no: serialNo, text }),
-  });
-
-  if (!response.ok) {
-    throw new Error('Simulation failed');
-  }
-
-  return response.json();
-}
-
-/**
  * Poll for job completion
  */
 export function pollJobStatus(serialNo, onUpdate, onComplete, onError) {

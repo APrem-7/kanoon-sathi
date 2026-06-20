@@ -37,7 +37,7 @@ export const store = {
     );
   },
 
-  // Store OCR result by job_id (from Lambda 3 webhook)
+  // Store OCR result by job_id (from Lambda 3 webhook or S3 poll)
   storeOCRResult(jobId, text) {
     // Try to find matching job by serialNo or jobId
     for (const [key, job] of jobs) {
@@ -46,10 +46,14 @@ export const store = {
         job.text = text;
         job.updatedAt = new Date().toISOString();
         jobs.set(key, job);
+        console.log(`[STORE] storeOCRResult – matched key: "${key}" for jobId: "${jobId}" → status: completed`);
         return job;
       }
     }
-    // If no matching job, create a new entry
+    // No matching job found – log all known keys for debugging
+    console.warn(`[STORE] storeOCRResult – NO MATCH for jobId: "${jobId}"`);
+    console.warn(`[STORE] Known keys:`, Array.from(jobs.keys()));
+    // Create a new orphan entry (webhook arrived before upload registered)
     const job = {
       serialNo: jobId,
       fileName: 'unknown',
