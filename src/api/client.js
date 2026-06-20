@@ -93,3 +93,23 @@ export function pollJobStatus(serialNo, onUpdate, onComplete, onError) {
 
   return () => clearInterval(interval);
 }
+
+/**
+ * Analyze OCR text with Cerebras LLM
+ */
+export async function analyzeDocument(text) {
+  const response = await fetch(`${API_BASE}/analyze`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ text }),
+  });
+
+  if (!response.ok) {
+    const error = await response.json().catch(() => ({ error: 'Analysis failed' }));
+    throw new Error(error.error || 'Analysis failed');
+  }
+
+  return response.json();
+}
