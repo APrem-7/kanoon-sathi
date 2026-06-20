@@ -6,6 +6,7 @@ import { S3Client, GetObjectCommand, ListObjectsV2Command } from '@aws-sdk/clien
 import { DynamoDBClient, ListTablesCommand } from '@aws-sdk/client-dynamodb';
 import { DynamoDBDocumentClient, ScanCommand } from '@aws-sdk/lib-dynamodb';
 import { store } from './store.js';
+import { analyzeLegalDocument } from './cerebras.js';
 
 const app = express();
 const PORT = 3001;
@@ -109,6 +110,27 @@ app.post('/api/ocr/webhook', (req, res) => {
 // ─────────────────────────────────────────────
 app.get('/api/jobs', (_req, res) => {
   return res.json({ jobs: store.getAllJobs() });
+});
+
+// ─────────────────────────────────────────────
+// POST /api/analyze – Analyze OCR text with Cerebras LLM
+// ─────────────────────────────────────────────
+app.post('/api/analyze', async (req, res) => {
+  try {
+    const { text } = req.body;
+    if (!text) {
+      return res.status(400).json({ error: 'OCR text is required' });
+    }
+    
+    console.log(`[ANALYZE] Received request with text length=${text.length}`);
+    const structuredData = await analyzeLegalDocument(text);
+    console.log(`[ANALYZE] Success: ${JSON.stringify(structuredData).substring(0, 100)}...`);
+    
+    return res.json(structuredData);
+  } catch (error) {
+    console.error('[ANALYZE ERROR]', error.message);
+    return res.status(500).json({ error: 'LLM Analysis failed: ' + error.message });
+  }
 });
 
 // ─────────────────────────────────────────────
@@ -280,9 +302,9 @@ async function pollDynamoForResult(serialNo) {
       }
 
       // ── Strategy D: S3 list scan fallback after timeout ──
-      // If DynamoDB is stuck at 'uploaded' with no textract_job_id,
-      // the Lambda→DynamoDB link is completely broken. Try listing
-      // recent processed/ files in S3 and match by timing.
+      // [DISABLED] This strategy is dangerous as it serves the most recent processed file,
+      // which often belongs to a completely different document if DynamoDB is stuck.
+      /*
       if (attempts >= S3_FALLBACK_AFTER && !s3FallbackTriggered) {
         s3FallbackTriggered = true;
         console.log(`[DYNAMO POLL] ⚡ Fallback D: scanning S3 processed/ prefix for serialNo=${serialNo}`);
@@ -296,6 +318,7 @@ async function pollDynamoForResult(serialNo) {
         const ok = await fallbackS3ListScan(serialNo);
         if (ok) { clearInterval(interval); return; }
       }
+      */
 
     } catch (err) {
       console.error(`[DYNAMO POLL] Error on attempt ${attempts} | serialNo=${serialNo} | ${err.message}`);
