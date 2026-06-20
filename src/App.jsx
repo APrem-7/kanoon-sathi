@@ -1,18 +1,24 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import Header from './components/Layout/Header';
 import UploadZone from './components/Upload/UploadZone';
 import StatusTracker from './components/Processing/StatusTracker';
 import TextViewer from './components/OCRResult/TextViewer';
-import SaleDeedChart from './components/OCRResult/SaleDeedChart';
-import { parseSaleDeed } from './utils/saleDeedParser';
+import OwnershipGraph from './components/OCRResult/OwnershipGraph';
+import AISummary from './components/OCRResult/AISummary';
+import TimelineView from './components/OCRResult/TimelineView';
+import EntitiesView from './components/OCRResult/EntitiesView';
+import { analyzeDocument } from './api/client';
+import { FileText, Network, Calendar, Database, AlignLeft } from 'lucide-react';
 import './index.css';
 
 function App() {
   const [currentView, setCurrentView] = useState('upload'); // 'upload', 'processing', 'results'
-  const [uploadInfo, setUploadInfo] = useState(null); // { serialNo, fileName, s3Path, ... }
-  const [jobData, setJobData] = useState(null); // { status, text, ... }
+  const [uploadInfo, setUploadInfo] = useState(null); 
+  const [jobData, setJobData] = useState(null); 
   const [parsedData, setParsedData] = useState(null);
-  const [activeTab, setActiveTab] = useState('flowchart'); // 'flowchart', 'text'
+  const [isAnalyzing, setIsAnalyzing] = useState(false);
+  const [analysisError, setAnalysisError] = useState(null);
+  const [activeTab, setActiveTab] = useState('summary'); // 'summary', 'graph', 'timeline', 'entities', 'raw'
 
   // Handle successful file upload
   const handleUploadSuccess = (info) => {
@@ -21,12 +27,29 @@ function App() {
   };
 
   // Handle OCR completion
-  const handleProcessingComplete = (job) => {
+  const handleProcessingComplete = async (job) => {
     setJobData(job);
+    
     if (job.text) {
-      setParsedData(parseSaleDeed(job.text));
+      try {
+        setIsAnalyzing(true);
+        setAnalysisError(null);
+        // We stay on the "processing" view (or transition to a specialized analyzing view)
+        // For simplicity, we can move to 'results' but show a loading overlay for LLM
+        setCurrentView('results');
+        
+        const structuredData = await analyzeDocument(job.text);
+        setParsedData(structuredData);
+      } catch (error) {
+        console.error("Failed to analyze document with LLM:", error);
+        setAnalysisError(error.message || 'Analysis failed');
+        setActiveTab('raw'); // Fallback to raw OCR tab
+      } finally {
+        setIsAnalyzing(false);
+      }
+    } else {
+      setCurrentView('results');
     }
-    setCurrentView('results');
   };
 
 
@@ -78,54 +101,67 @@ function App() {
                 <p>Document: {uploadInfo?.fileName || 'Unknown'} (Serial: {uploadInfo?.serialNo || 'Unknown'})</p>
               </div>
 
-              {parsedData && (
-                <div className="results-confidence">
-                  <div>
-                    <div className="results-confidence-score">{parsedData.confidence}%</div>
-                    <div className="results-confidence-label">Extraction Confidence</div>
-                  </div>
-                  <div className="results-confidence-bar">
-                    <div 
-                      className="results-confidence-fill" 
-                      style={{ width: `${parsedData.confidence}%` }}
-                    />
-                  </div>
+              {isAnalyzing ? (
+                <div className="flex flex-col items-center justify-center py-20 space-y-4">
+                  <div className="w-12 h-12 border-4 border-indigo-500/20 border-t-indigo-500 rounded-full animate-spin"></div>
+                  <h3 className="text-xl font-semibold text-white">Cerebras AI is analyzing the document...</h3>
+                  <p className="text-slate-400">Extracting legal intelligence and building the knowledge graph.</p>
                 </div>
+              ) : (
+                <>
+                  {analysisError && (
+                    <div className="bg-red-500/10 border border-red-500/20 text-red-400 p-4 rounded-xl mb-6 flex items-start gap-3">
+                      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="shrink-0 mt-0.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                      <div>
+                        <h4 className="font-semibold text-red-300">Analysis Failed</h4>
+                        <p className="text-sm opacity-90 mt-1">{analysisError}</p>
+                        <p className="text-sm mt-2">Falling back to raw extracted text. Please check your backend logs or Cerebras API key.</p>
+                      </div>
+                    </div>
+                  )}
+
+                  <div className="results-tabs flex flex-wrap gap-2 mb-6">
+                    <button 
+                      className={`flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition-colors ${activeTab === 'summary' ? 'bg-indigo-500/20 text-indigo-400 border border-indigo-500/30' : 'text-slate-400 hover:text-white glass'}`}
+                      onClick={() => setActiveTab('summary')}
+                    >
+                      <FileText size={16} /> AI Summary
+                    </button>
+                    <button 
+                      className={`flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition-colors ${activeTab === 'graph' ? 'bg-indigo-500/20 text-indigo-400 border border-indigo-500/30' : 'text-slate-400 hover:text-white glass'}`}
+                      onClick={() => setActiveTab('graph')}
+                    >
+                      <Network size={16} /> Ownership Graph
+                    </button>
+                    <button 
+                      className={`flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition-colors ${activeTab === 'timeline' ? 'bg-indigo-500/20 text-indigo-400 border border-indigo-500/30' : 'text-slate-400 hover:text-white glass'}`}
+                      onClick={() => setActiveTab('timeline')}
+                    >
+                      <Calendar size={16} /> Timeline
+                    </button>
+                    <button 
+                      className={`flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition-colors ${activeTab === 'entities' ? 'bg-indigo-500/20 text-indigo-400 border border-indigo-500/30' : 'text-slate-400 hover:text-white glass'}`}
+                      onClick={() => setActiveTab('entities')}
+                    >
+                      <Database size={16} /> Entities
+                    </button>
+                    <button 
+                      className={`flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition-colors ${activeTab === 'raw' ? 'bg-indigo-500/20 text-indigo-400 border border-indigo-500/30' : 'text-slate-400 hover:text-white glass'}`}
+                      onClick={() => setActiveTab('raw')}
+                    >
+                      <AlignLeft size={16} /> Raw OCR
+                    </button>
+                  </div>
+
+                  <div>
+                    {activeTab === 'summary' && (parsedData ? <AISummary data={parsedData} /> : <div className="glass p-6 text-slate-400">No summary data available.</div>)}
+                    {activeTab === 'graph' && (parsedData ? <OwnershipGraph data={parsedData} /> : <div className="glass p-6 text-slate-400">No graph data available.</div>)}
+                    {activeTab === 'timeline' && (parsedData ? <TimelineView timeline={parsedData.timeline} /> : <div className="glass p-6 text-slate-400">No timeline data available.</div>)}
+                    {activeTab === 'entities' && (parsedData ? <EntitiesView data={parsedData} /> : <div className="glass p-6 text-slate-400">No entities data available.</div>)}
+                    {activeTab === 'raw' && <TextViewer text={jobData?.text} jobId={uploadInfo?.serialNo} />}
+                  </div>
+                </>
               )}
-
-              <div className="results-tabs">
-                <button 
-                  className={`results-tab ${activeTab === 'flowchart' ? 'active' : ''}`}
-                  onClick={() => setActiveTab('flowchart')}
-                >
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
-                    <line x1="3" y1="9" x2="21" y2="9" />
-                    <line x1="9" y1="21" x2="9" y2="9" />
-                  </svg>
-                  Visual Flowchart
-                </button>
-                <button 
-                  className={`results-tab ${activeTab === 'text' ? 'active' : ''}`}
-                  onClick={() => setActiveTab('text')}
-                >
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
-                    <polyline points="14 2 14 8 20 8" />
-                    <line x1="16" y1="13" x2="8" y2="13" />
-                    <line x1="16" y1="17" x2="8" y2="17" />
-                  </svg>
-                  Raw Extracted Text
-                </button>
-              </div>
-
-              <div style={{ background: 'var(--color-bg-surface)', border: '1px solid var(--color-border)', borderRadius: 'var(--radius-lg)', padding: 'var(--space-md)' }}>
-                {activeTab === 'flowchart' ? (
-                  <SaleDeedChart parsedData={parsedData} />
-                ) : (
-                  <TextViewer text={jobData?.text} jobId={uploadInfo?.serialNo} />
-                )}
-              </div>
             </div>
           )}
         </main>

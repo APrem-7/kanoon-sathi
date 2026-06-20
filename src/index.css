@@ -5,11 +5,11 @@
 /* ── CSS Custom Properties ── */
 :root {
   /* Primary palette – Deep navy/indigo */
-  --color-bg-primary: #06080f;
-  --color-bg-secondary: #0c1021;
-  --color-bg-tertiary: #111630;
-  --color-bg-elevated: #161c3d;
-  --color-bg-surface: rgba(22, 28, 61, 0.6);
+  --color-bg-primary: #030712;
+  --color-bg-secondary: #0b1120;
+  --color-bg-tertiary: #111827;
+  --color-bg-elevated: #1f2937;
+  --color-bg-surface: rgba(17, 24, 39, 0.4);
 
   /* Accent – Gold/Amber */
   --color-accent: #f59e0b;
@@ -106,9 +106,8 @@ body::before {
   position: fixed;
   inset: 0;
   background:
-    radial-gradient(ellipse at 20% 0%, rgba(99, 102, 241, 0.08) 0%, transparent 50%),
-    radial-gradient(ellipse at 80% 100%, rgba(245, 158, 11, 0.05) 0%, transparent 50%),
-    radial-gradient(ellipse at 50% 50%, rgba(139, 92, 246, 0.03) 0%, transparent 70%);
+    radial-gradient(circle at 50% -20%, rgba(99, 102, 241, 0.15), transparent 60%),
+    radial-gradient(circle at 100% 100%, rgba(245, 158, 11, 0.05), transparent 50%);
   z-index: -1;
   pointer-events: none;
 }
@@ -165,10 +164,10 @@ input, textarea, select {
 
 /* ── Utility Classes ── */
 .glass {
-  background: var(--color-bg-surface);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border: 1px solid var(--color-border);
+  background: rgba(255, 255, 255, 0.03);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 .glass-accent {
