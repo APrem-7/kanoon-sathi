@@ -32,7 +32,7 @@ app.post('/api/upload', upload.single('file'), async (req, res) => {
     // Build native multipart form data for AWS API
     const form = new globalThis.FormData();
     form.append('serial_no', serial_no);
-    
+
     // Convert Buffer to Blob for standard FormData compliance
     const blob = new Blob([file.buffer], { type: file.mimetype });
     form.append('file', blob, file.originalname);
@@ -71,17 +71,41 @@ app.post('/api/upload', upload.single('file'), async (req, res) => {
 // ─────────────────────────────────────────────
 app.post('/api/ocr/webhook', (req, res) => {
   try {
-    const { job_id, text } = req.body;
-    if (!job_id || !text) {
-      return res.status(400).json({ error: 'job_id and text are required' });
+    console.log('\n========== WEBHOOK RECEIVED ==========');
+    console.log('Headers:', req.headers);
+    console.log('Body:', JSON.stringify(req.body, null, 2));
+    console.log('======================================\n');
+
+    const { job_id, text, ocr_text } = req.body;
+
+    const finalText = text || ocr_text;
+
+    if (!job_id || !finalText) {
+      console.error('[WEBHOOK ERROR] Missing fields');
+      console.error('job_id:', job_id);
+      console.error('text:', text);
+      console.error('ocr_text:', ocr_text);
+
+      return res.status(400).json({
+        error: 'job_id and OCR text are required',
+        received: req.body,
+      });
     }
 
-    const job = store.storeOCRResult(job_id, text);
-    console.log(`[OCR WEBHOOK] Result received for job: ${job_id}`);
-    return res.json({ status: 'success', job });
+    const job = store.storeOCRResult(job_id, finalText);
+
+    console.log(`[OCR WEBHOOK] Result stored for job: ${job_id}`);
+    console.log(`[OCR WEBHOOK] Text length: ${finalText.length}`);
+
+    return res.json({
+      status: 'success',
+      job,
+    });
   } catch (error) {
-    console.error('[WEBHOOK ERROR]', error.message);
-    return res.status(500).json({ error: error.message });
+    console.error('[WEBHOOK ERROR]', error);
+    return res.status(500).json({
+      error: error.message,
+    });
   }
 });
 
