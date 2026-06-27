@@ -1,34 +1,42 @@
 import React from 'react';
-import { Calendar, CircleDot } from 'lucide-react';
+import { Calendar } from 'lucide-react';
 
 export default function TimelineView({ timeline }) {
   if (!timeline || timeline.length === 0) {
     return (
-      <div className="glass rounded-xl p-8 text-center text-slate-400">
-        No timeline events detected.
+      <div className="timeline-card animate-fadeIn">
+        <div className="timeline-card-header">
+          <Calendar size={18} />
+          <h3>Event Timeline</h3>
+        </div>
+        <div style={{ color: 'var(--color-text-muted)', textAlign: 'center', padding: 'var(--space-lg) 0' }}>
+          No timeline events detected in this legal document.
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="glass rounded-xl p-6 shadow-lg">
-      <div className="flex items-center gap-2 mb-6 text-indigo-400">
+    <div className="timeline-card animate-fadeIn">
+      <div className="timeline-card-header">
         <Calendar size={20} />
-        <h3 className="text-lg font-semibold text-white">Event Timeline</h3>
+        <h3>Event Timeline</h3>
       </div>
       
-      <div className="relative pl-4 border-l border-white/10 space-y-6">
+      <div className="timeline-pipeline">
         {timeline.map((event, idx) => (
-          <div key={idx} className="relative">
-            <div className="absolute -left-[21px] top-1 text-indigo-500 bg-slate-900 rounded-full">
-              <CircleDot size={12} className="fill-indigo-500/20" />
+          <div key={idx} className="timeline-item">
+            {/* Glowing checkpoint node */}
+            <div className="timeline-node" />
+            
+            {/* Highlighted Event Date */}
+            <div className="timeline-date">
+              {event.date || 'Execution Date'}
             </div>
             
-            <div className="mb-1 text-sm font-bold text-amber-400">
-              {event.date || 'Unknown Date'}
-            </div>
-            <div className="text-slate-200">
-              {event.event || event.description || 'Event Details'}
+            {/* Event Description */}
+            <div className="timeline-description">
+              {event.event || event.description || 'Legal Event / Transaction Transaction'}
             </div>
           </div>
         ))}

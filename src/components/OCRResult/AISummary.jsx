@@ -1,31 +1,67 @@
 import React from 'react';
-import { FileText } from 'lucide-react';
+import { FileText, User, DollarSign, MapPin } from 'lucide-react';
 
 export default function AISummary({ data }) {
   if (!data) return null;
 
+  const { document_type, summary, saleAmount, seller, buyer, property } = data;
+
   return (
-    <div className="glass rounded-xl p-6 shadow-lg mb-6">
-      <div className="flex items-center gap-3 mb-4 border-b border-white/10 pb-4">
-        <div className="p-2 bg-indigo-500/20 text-indigo-400 rounded-lg">
-          <FileText size={24} />
+    <div className="summary-container animate-fadeIn">
+      <div className="summary-main-card">
+        {/* Header Block */}
+        <div className="summary-header-row">
+          <div className="summary-title-wrapper">
+            <div className="summary-icon-box">
+              <FileText size={22} />
+            </div>
+            <div>
+              <h3>AI Executive Summary</h3>
+            </div>
+          </div>
+          {document_type && (
+            <span className="summary-badge summary-badge-type">
+              {document_type}
+            </span>
+          )}
         </div>
-        <div>
-          <h2 className="text-xl font-semibold text-white">AI Executive Summary</h2>
-          <p className="text-sm text-indigo-300">Document Type: {data.document_type || 'Unknown'}</p>
+        
+        {/* Core Summary Narrative */}
+        <div className="summary-text">
+          {summary || 'No summary text available.'}
+        </div>
+        
+        {/* Core Stats Overview */}
+        <div className="summary-stats-grid">
+          {seller?.name && (
+            <div className="summary-stat-card">
+              <span className="summary-stat-label">Seller / Vendor</span>
+              <span className="summary-stat-value">{seller.name}</span>
+            </div>
+          )}
+
+          {buyer?.name && (
+            <div className="summary-stat-card">
+              <span className="summary-stat-label">Buyer / Purchaser</span>
+              <span className="summary-stat-value">{buyer.name}</span>
+            </div>
+          )}
+
+          {saleAmount && (
+            <div className="summary-stat-card">
+              <span className="summary-stat-label">Consideration Value</span>
+              <span className="summary-stat-value highlighted">{saleAmount}</span>
+            </div>
+          )}
+
+          {property?.location && (
+            <div className="summary-stat-card">
+              <span className="summary-stat-label">Property Location</span>
+              <span className="summary-stat-value" title={property.location}>{property.location}</span>
+            </div>
+          )}
         </div>
       </div>
-      
-      <div className="text-slate-200 leading-relaxed text-lg">
-        {data.summary || 'No summary available.'}
-      </div>
-      
-      {data.saleAmount && (
-        <div className="mt-6 inline-flex items-center gap-2 bg-amber-500/10 text-amber-400 px-4 py-2 rounded-lg border border-amber-500/20">
-          <span className="text-sm font-medium uppercase tracking-wider">Consideration Amount:</span>
-          <span className="font-bold text-lg">{data.saleAmount}</span>
-        </div>
-      )}
     </div>
   );
 }
