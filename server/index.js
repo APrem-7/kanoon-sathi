@@ -51,24 +51,28 @@ app.use(express.json());
 // ─────────────────────────────────────────────
 // POST /api/upload – Proxy file upload to AWS
 // ─────────────────────────────────────────────
-app.post('/api/upload', upload.single('file'), async (req, res) => {
+app.post('/api/upload', upload.array('file'), async (req, res) => {
   try {
     const { serial_no } = req.body;
-    const file = req.file;
+    const files = req.files;
 
     if (!serial_no) return res.status(400).json({ error: 'serial_no is required' });
-    if (!file)      return res.status(400).json({ error: 'file is required' });
+    if (!files || files.length === 0) return res.status(400).json({ error: 'file is required' });
 
     const form = new globalThis.FormData();
     form.append('serial_no', serial_no);
-    form.append('file', new Blob([file.buffer], { type: file.mimetype }), file.originalname);
+    
+    files.forEach((file) => {
+      form.append('file', new Blob([file.buffer], { type: file.mimetype }), file.originalname);
+    });
 
     const response = await fetch(PROPERTY_API, { method: 'POST', body: form });
     const data     = await response.json();
 
     if (response.ok) {
-      const job = store.createJob(serial_no, file.originalname, data.s3_path || '');
-      console.log(`[UPLOAD] serial_no=${serial_no} | file=${file.originalname} | s3_path=${data.s3_path || 'unknown'}`);
+      const displayFilename = data.file_name || files[0].originalname;
+      const job = store.createJob(serial_no, displayFilename, data.s3_path || '');
+      console.log(`[UPLOAD] serial_no=${serial_no} | file=${displayFilename} | s3_path=${data.s3_path || 'unknown'}`);
       console.log(`[UPLOAD] AWS response:`, JSON.stringify(data));
 
       // Poll DynamoDB until Lambda 2 marks status=ocr_completed, then fetch S3

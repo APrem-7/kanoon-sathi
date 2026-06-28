@@ -5,7 +5,11 @@ import { API_BASE, POLL_INTERVAL } from '../utils/constants';
  */
 export async function uploadDocument(file, serialNo) {
   const formData = new FormData();
-  formData.append('file', file);
+  if (Array.isArray(file)) {
+    file.forEach((f) => formData.append('file', f));
+  } else {
+    formData.append('file', file);
+  }
   formData.append('serial_no', serialNo);
 
   const response = await fetch(`${API_BASE}/upload`, {
