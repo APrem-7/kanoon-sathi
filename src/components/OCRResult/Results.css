@@ -13,7 +13,7 @@
   align-items: center;
   gap: var(--space-sm);
   padding: 10px 20px;
-  background: rgba(255, 255, 255, 0.02);
+  background: rgba(15, 23, 42, 0.02);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-md);
   color: var(--color-text-secondary);
@@ -26,8 +26,8 @@
 
 .results-back-btn:hover {
   color: var(--color-text-primary);
-  background: rgba(255, 255, 255, 0.06);
-  border-color: rgba(255, 255, 255, 0.2);
+  background: rgba(15, 23, 42, 0.06);
+  border-color: rgba(15, 23, 42, 0.2);
   transform: translateX(-4px);
 }
 
@@ -71,7 +71,7 @@
   justify-content: center;
   padding: var(--space-3xl) var(--space-lg);
   min-height: 400px;
-  background: rgba(11, 17, 32, 0.4);
+  background: rgba(255, 255, 255, 0.4);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
   border: 1px solid var(--color-border);
@@ -191,7 +191,7 @@
   display: flex;
   flex-wrap: wrap;
   gap: var(--space-sm);
-  background: rgba(255, 255, 255, 0.02);
+  background: rgba(15, 23, 42, 0.02);
   border: 1px solid var(--color-border);
   padding: 6px;
   border-radius: var(--radius-lg);
@@ -215,14 +215,14 @@
 
 .results-tab-trigger:hover {
   color: var(--color-text-primary);
-  background: rgba(255, 255, 255, 0.04);
+  background: rgba(15, 23, 42, 0.04);
 }
 
 .results-tab-trigger.active {
   color: var(--color-accent);
   background: var(--color-accent-subtle);
   border-color: var(--color-border-accent);
-  box-shadow: var(--shadow-sm), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+  box-shadow: var(--shadow-sm), inset 0 1px 0 rgba(15, 23, 42, 0.05);
 }
 
 /* ── AI Summary Page ── */
@@ -233,7 +233,7 @@
 }
 
 .summary-main-card {
-  background: rgba(255, 255, 255, 0.02);
+  background: rgba(15, 23, 42, 0.02);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-lg);
   padding: var(--space-lg);
@@ -303,7 +303,7 @@
 }
 
 .summary-stat-card {
-  background: rgba(255, 255, 255, 0.01);
+  background: rgba(15, 23, 42, 0.01);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-md);
   padding: var(--space-md);
@@ -339,7 +339,7 @@
 }
 
 .entity-card {
-  background: rgba(255, 255, 255, 0.02);
+  background: rgba(15, 23, 42, 0.02);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-lg);
   padding: var(--space-lg);
@@ -350,7 +350,7 @@
 
 .entity-card:hover {
   transform: translateY(-4px);
-  border-color: rgba(255, 255, 255, 0.15);
+  border-color: rgba(15, 23, 42, 0.15);
 }
 
 .entity-card-header {
@@ -401,7 +401,7 @@
 
 /* ── Timeline Track Layout ── */
 .timeline-card {
-  background: rgba(255, 255, 255, 0.02);
+  background: rgba(15, 23, 42, 0.02);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-lg);
   padding: var(--space-lg);
@@ -427,7 +427,7 @@
 .timeline-pipeline {
   position: relative;
   padding-left: 32px;
-  border-left: 2px solid rgba(255, 255, 255, 0.05);
+  border-left: 2px solid rgba(15, 23, 42, 0.05);
   margin-left: var(--space-md);
 }
 
@@ -475,7 +475,7 @@
   font-size: 1rem;
   line-height: 1.6;
   color: var(--color-text-secondary);
-  background: rgba(255, 255, 255, 0.01);
+  background: rgba(15, 23, 42, 0.01);
   border: 1px solid var(--color-border);
   padding: var(--space-md);
   border-radius: var(--radius-md);
@@ -483,15 +483,15 @@
 }
 
 .timeline-item:hover .timeline-description {
-  background: rgba(255, 255, 255, 0.03);
-  border-color: rgba(255, 255, 255, 0.12);
+  background: rgba(15, 23, 42, 0.03);
+  border-color: rgba(15, 23, 42, 0.12);
 }
 
 /* ── Ownership Graph Canvas Container ── */
 .graph-canvas-container {
   height: 550px;
   width: 100%;
-  background: rgba(3, 7, 18, 0.6);
+  background: rgba(255, 255, 255, 0.6);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-lg);
   overflow: hidden;
@@ -505,7 +505,7 @@
   top: var(--space-sm);
   left: var(--space-sm);
   z-index: 10;
-  background: rgba(11, 17, 32, 0.8);
+  background: rgba(255, 255, 255, 0.8);
   border: 1px solid var(--color-border);
   padding: 6px 14px;
   border-radius: var(--radius-full);
@@ -523,7 +523,7 @@
 
 /* ── Custom Node in Ownership Graph ── */
 .custom-node {
-  background: rgba(15, 23, 42, 0.8);
+  background: rgba(255, 255, 255, 0.8);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
   border: 1.5px solid var(--color-border);
@@ -547,7 +547,7 @@
   gap: var(--space-sm);
   margin-bottom: var(--space-xs);
   color: var(--color-accent);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  border-bottom: 1px solid rgba(15, 23, 42, 0.05);
   padding-bottom: 6px;
 }
 
@@ -583,7 +583,7 @@
 }
 
 .react-flow__controls-button {
-  background: rgba(15, 23, 42, 0.8) !important;
+  background: rgba(255, 255, 255, 0.8) !important;
   border-bottom: 1px solid var(--color-border) !important;
   color: var(--color-text-secondary) !important;
   fill: currentColor !important;

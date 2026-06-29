@@ -251,7 +251,7 @@
   background: linear-gradient(90deg, var(--color-accent-dark), var(--color-accent), var(--color-accent-light));
   border-radius: var(--radius-full);
   transition: width 0.3s ease;
-  box-shadow: 0 0 10px rgba(245, 158, 11, 0.4);
+  box-shadow: 0 0 10px rgba(79, 70, 229, 0.4);
 }
 
 .upload-progress-text {
@@ -284,7 +284,7 @@
 
 .upload-submit:hover:not(:disabled) {
   transform: translateY(-2px);
-  box-shadow: 0 8px 25px rgba(245, 158, 11, 0.35);
+  box-shadow: 0 8px 25px rgba(79, 70, 229, 0.35);
 }
 
 .upload-submit:active:not(:disabled) {
@@ -323,7 +323,7 @@
 /* ── Queue Management CSS ── */
 .upload-queue-container {
   margin-top: var(--space-xl);
-  background: rgba(255, 255, 255, 0.02);
+  background: rgba(15, 23, 42, 0.02);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-lg);
   padding: var(--space-lg);
@@ -357,7 +357,7 @@
   align-items: center;
   justify-content: space-between;
   padding: 10px 14px;
-  background: rgba(255, 255, 255, 0.03);
+  background: rgba(15, 23, 42, 0.03);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-md);
   animation: scaleIn 0.2s ease-out;
@@ -417,7 +417,7 @@
   gap: var(--space-sm);
   width: 100%;
   padding: 12px var(--space-md);
-  background: rgba(255, 255, 255, 0.05);
+  background: rgba(15, 23, 42, 0.05);
   border: 1px solid var(--color-border);
   color: var(--color-text-primary);
   font-size: 0.9375rem;
@@ -429,7 +429,7 @@
 }
 
 .upload-btn-secondary:hover:not(:disabled) {
-  background: rgba(255, 255, 255, 0.1);
+  background: rgba(15, 23, 42, 0.1);
   border-color: var(--color-border-hover);
 }
 
@@ -452,7 +452,7 @@
   padding: var(--space-lg);
   border: 1px solid var(--color-border-accent);
   border-radius: var(--radius-lg);
-  background: rgba(255, 255, 255, 0.02);
+  background: rgba(15, 23, 42, 0.02);
   display: flex;
   flex-direction: column;
   gap: var(--space-md);
