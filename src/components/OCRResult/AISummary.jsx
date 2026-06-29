@@ -32,35 +32,46 @@ export default function AISummary({ data }) {
         </div>
         
         {/* Core Stats Overview */}
-        <div className="summary-stats-grid">
-          {seller?.name && (
-            <div className="summary-stat-card">
-              <span className="summary-stat-label">Seller / Vendor</span>
-              <span className="summary-stat-value">{seller.name}</span>
-            </div>
-          )}
+        {(() => {
+          const isMultiDeed = document_type === 'Unified Title Chain' || (data.deeds && data.deeds.length > 1);
+          return (
+            <div className="summary-stats-grid">
+              {seller?.name && (
+                <div className="summary-stat-card">
+                  <span className="summary-stat-label">
+                    {isMultiDeed ? 'Earliest Seller / Vendor' : 'Seller / Vendor'}
+                  </span>
+                  <span className="summary-stat-value">{seller.name}</span>
+                </div>
+              )}
 
-          {buyer?.name && (
-            <div className="summary-stat-card">
-              <span className="summary-stat-label">Buyer / Purchaser</span>
-              <span className="summary-stat-value">{buyer.name}</span>
-            </div>
-          )}
+              {buyer?.name && (
+                <div className="summary-stat-card">
+                  <span className="summary-stat-label">
+                    {isMultiDeed ? 'Ultimate Buyer / Purchaser' : 'Buyer / Purchaser'}
+                  </span>
+                  <span className="summary-stat-value">{buyer.name}</span>
+                </div>
+              )}
 
-          {saleAmount && (
-            <div className="summary-stat-card">
-              <span className="summary-stat-label">Consideration Value</span>
-              <span className="summary-stat-value highlighted">{saleAmount}</span>
-            </div>
-          )}
+              {saleAmount && (
+                <div className="summary-stat-card">
+                  <span className="summary-stat-label">
+                    {isMultiDeed ? 'Consideration (Latest Deed)' : 'Consideration Value'}
+                  </span>
+                  <span className="summary-stat-value highlighted">{saleAmount}</span>
+                </div>
+              )}
 
-          {property?.location && (
-            <div className="summary-stat-card">
-              <span className="summary-stat-label">Property Location</span>
-              <span className="summary-stat-value" title={property.location}>{property.location}</span>
+              {property?.location && (
+                <div className="summary-stat-card">
+                  <span className="summary-stat-label">Property Location</span>
+                  <span className="summary-stat-value" title={property.location}>{property.location}</span>
+                </div>
+              )}
             </div>
-          )}
-        </div>
+          );
+        })()}
       </div>
     </div>
   );
