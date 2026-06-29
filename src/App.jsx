@@ -10,6 +10,8 @@ import EntitiesView from './components/OCRResult/EntitiesView';
 import { analyzeDocument } from './api/client';
 import { FileText, Network, Calendar, Database, AlignLeft } from 'lucide-react';
 import './index.css';
+import './components/OCRResult/Results.css';
+
 
 function App() {
   const [currentView, setCurrentView] = useState('upload'); // 'upload', 'processing', 'results'
@@ -124,6 +126,8 @@ function App() {
                       ? 'Analyzing the merged deeds to construct the unified ownership timeline and property graph.' 
                       : 'Extracting legal intelligence, mapping property boundaries, and building the ownership graph.'}
                   </p>
+                  <h3 className="analysis-loading-title">Cerebras AI is analyzing the document...</h3>
+                  <p className="analysis-loading-subtitle">Extracting legal intelligence, mapping property boundaries, and building the ownership graph.</p>
                 </div>
               ) : (
                 <>
@@ -136,6 +140,7 @@ function App() {
                         <h4>Analysis Failed</h4>
                         <div className="analysis-error-desc">{analysisError}</div>
                         <p className="analysis-error-fallback">Falling back to raw extracted text. Please check your backend logs or Cerebras API key configuration.</p>
+                        <p className="analysis-error-fallback">Falling back to raw extracted text. Please check your backend logs or Cerebras API key.</p>
                       </div>
                     </div>
                   )}
@@ -187,6 +192,7 @@ function App() {
                     )}
 
                   </div>
+
                 </>
               )}
             </div>
