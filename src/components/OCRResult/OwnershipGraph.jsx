@@ -78,10 +78,106 @@ const resolveNodeId = (id) => {
 };
 
 export default function OwnershipGraph({ data }) {
-  const { seller, buyer, property, registration, relationships } = data;
+  const { seller, buyer, property, registration, relationships, deeds } = data;
+
+  const isMultiDeed = deeds && Array.isArray(deeds) && deeds.length > 1;
+
+  // Compute unique owners chronologically from deeds array
+  const owners = useMemo(() => {
+    if (!isMultiDeed) return [];
+    
+    const list = [];
+    const addedNames = new Set();
+    
+    deeds.forEach((deed) => {
+      const deedSeller = deed.seller || {};
+      const deedBuyer = deed.buyer || {};
+      
+      if (deedSeller.name && !addedNames.has(deedSeller.name.toLowerCase().trim())) {
+        addedNames.add(deedSeller.name.toLowerCase().trim());
+        list.push({
+          name: deedSeller.name,
+          address: deedSeller.address || '',
+          role: list.length === 0 ? 'Earliest Seller / Vendor' : 'Intermediate Owner'
+        });
+      }
+      
+      if (deedBuyer.name && !addedNames.has(deedBuyer.name.toLowerCase().trim())) {
+        addedNames.add(deedBuyer.name.toLowerCase().trim());
+        list.push({
+          name: deedBuyer.name,
+          address: deedBuyer.address || '',
+          role: 'Intermediate Owner'
+        });
+      }
+    });
+    
+    if (list.length > 0) {
+      list[list.length - 1].role = 'Ultimate Buyer / Purchaser';
+    }
+    
+    return list;
+  }, [deeds, isMultiDeed]);
 
   const initialNodes = useMemo(() => {
     const nodes = [];
+
+    if (isMultiDeed && owners.length > 0) {
+      // ── MULTI-DEED HORIZONTAL OWNER TIMELINE FLOW ──
+      owners.forEach((owner, idx) => {
+        nodes.push({
+          id: `owner-${idx}`,
+          type: 'custom',
+          position: { x: 80 + (idx * 300), y: 220 },
+          data: {
+            label: owner.name,
+            sublabel: owner.address || '',
+            type: owner.role,
+            icon: User
+          }
+        });
+      });
+
+      // Property node centered below the owner chain
+      if (property?.location || property?.surveyNo || property?.area) {
+        const midX = 80 + (((owners.length - 1) * 300) / 2);
+        nodes.push({
+          id: 'property',
+          type: 'custom',
+          position: { x: midX, y: 400 },
+          data: { 
+            label: property.location || 'Deed Asset', 
+            sublabel: [
+              property.surveyNo ? `Survey: ${property.surveyNo}` : '',
+              property.area ? `Area: ${property.area}` : ''
+            ].filter(Boolean).join(' | '),
+            type: 'Property / Plot', 
+            icon: Home 
+          }
+        });
+      }
+
+      // Latest Registration Office centered above the owner chain
+      const hasRegDetails = registration && Object.values(registration).some(v => v);
+      if (hasRegDetails) {
+        const midX = 80 + (((owners.length - 1) * 300) / 2);
+        nodes.push({
+          id: 'registration',
+          type: 'custom',
+          position: { x: midX, y: 40 },
+          data: { 
+            label: registration.regNo || 'Registration Details', 
+            sublabel: registration.office || registration.date || 'Sub-Registrar Office', 
+            type: 'Latest Registration Details', 
+            icon: FileSignature 
+          }
+        });
+      }
+
+      return nodes;
+    }
+
+    // ── STANDARD SINGLE-DEED FLOW ──
     const coreNodeIds = [];
 
     // 1. Seller Node
@@ -181,7 +277,6 @@ export default function OwnershipGraph({ data }) {
               icon = FileText;
             }
 
-            // Position custom nodes below the core components line
             const customX = 80 + (customNodeCount * 300);
             const customY = 380;
             customNodeCount++;
@@ -198,9 +293,76 @@ export default function OwnershipGraph({ data }) {
     }
     
     return nodes;
-  }, [seller, buyer, property, registration, relationships]);
+  }, [seller, buyer, property, registration, relationships, owners, isMultiDeed]);
 
   const initialEdges = useMemo(() => {
+    if (isMultiDeed && owners.length > 0) {
+      const edges = [];
+      
+      // Connect horizontal sequence of owners
+      deeds.forEach((deed, index) => {
+        const dSeller = deed.seller?.name;
+        const dBuyer = deed.buyer?.name;
+        
+        if (dSeller && dBuyer) {
+          const srcIdx = owners.findIndex(o => o.name.toLowerCase().trim() === dSeller.toLowerCase().trim());
+          const tgtIdx = owners.findIndex(o => o.name.toLowerCase().trim() === dBuyer.toLowerCase().trim());
+          
+          if (srcIdx !== -1 && tgtIdx !== -1) {
+            const label = [
+              deed.date ? deed.date : '',
+              deed.saleAmount ? `for ${deed.saleAmount}` : ''
+            ].filter(Boolean).join(' | ') || 'Transferred';
+            
+            edges.push({
+              id: `e-transfer-${index}`,
+              source: `owner-${srcIdx}`,
+              target: `owner-${tgtIdx}`,
+              label: label,
+              animated: true,
+              markerEnd: { type: MarkerType.ArrowClosed, color: '#10b981' },
+              style: { stroke: '#10b981' }
+            });
+          }
+        }
+      });
+
+      // Connect earliest owner and ultimate owner to the property node
+      edges.push({
+        id: 'e-first-owner-prop',
+        source: 'owner-0',
+        target: 'property',
+        label: 'original owner',
+        markerEnd: { type: MarkerType.ArrowClosed, color: '#f59e0b' },
+        style: { stroke: '#f59e0b', strokeDasharray: '4 4' }
+      });
+      
+      edges.push({
+        id: 'e-last-owner-prop',
+        source: 'property',
+        target: `owner-${owners.length - 1}`,
+        label: 'current owner',
+        animated: true,
+        markerEnd: { type: MarkerType.ArrowClosed, color: '#10b981' },
+        style: { stroke: '#10b981' }
+      });
+
+      // Connect registration node if exists
+      const hasRegDetails = registration && Object.values(registration).some(v => v);
+      if (hasRegDetails) {
+        edges.push({
+          id: 'e-reg-prop',
+          source: 'registration',
+          target: 'property',
+          label: 'registered latest',
+          markerEnd: { type: MarkerType.ArrowClosed, color: '#6366f1' },
+          style: { stroke: '#6366f1', strokeDasharray: '2 2' }
+        });
+      }
+
+      return edges;
+    }
+
     // Default fallback edges if relationships are missing or empty
     if (!relationships || relationships.length === 0) {
       return [
@@ -253,7 +415,7 @@ export default function OwnershipGraph({ data }) {
         style: { stroke: strokeColor }
       };
     });
-  }, [relationships]);
+  }, [relationships, owners, deeds, isMultiDeed, registration]);
 
   const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
   const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
