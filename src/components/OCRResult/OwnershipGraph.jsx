@@ -320,8 +320,8 @@ export default function OwnershipGraph({ data }) {
               target: `owner-${tgtIdx}`,
               label: label,
               animated: true,
-              markerEnd: { type: MarkerType.ArrowClosed, color: '#10b981' },
-              style: { stroke: '#10b981' }
+              markerEnd: { type: MarkerType.ArrowClosed, color: '#237845' },
+              style: { stroke: '#237845' }
             });
           }
         }
@@ -333,8 +333,8 @@ export default function OwnershipGraph({ data }) {
         source: 'owner-0',
         target: 'property',
         label: 'original owner',
-        markerEnd: { type: MarkerType.ArrowClosed, color: '#f59e0b' },
-        style: { stroke: '#f59e0b', strokeDasharray: '4 4' }
+        markerEnd: { type: MarkerType.ArrowClosed, color: '#B37422' },
+        style: { stroke: '#B37422', strokeDasharray: '4 4' }
       });
       
       edges.push({
@@ -343,8 +343,8 @@ export default function OwnershipGraph({ data }) {
         target: `owner-${owners.length - 1}`,
         label: 'current owner',
         animated: true,
-        markerEnd: { type: MarkerType.ArrowClosed, color: '#10b981' },
-        style: { stroke: '#10b981' }
+        markerEnd: { type: MarkerType.ArrowClosed, color: '#237845' },
+        style: { stroke: '#237845' }
       });
 
       // Connect registration node if exists
@@ -355,8 +355,8 @@ export default function OwnershipGraph({ data }) {
           source: 'registration',
           target: 'property',
           label: 'registered latest',
-          markerEnd: { type: MarkerType.ArrowClosed, color: '#6366f1' },
-          style: { stroke: '#6366f1', strokeDasharray: '2 2' }
+          markerEnd: { type: MarkerType.ArrowClosed, color: '#1A5490' },
+          style: { stroke: '#1A5490', strokeDasharray: '2 2' }
         });
       }
 
@@ -372,8 +372,8 @@ export default function OwnershipGraph({ data }) {
           target: 'property',
           label: 'owns / sells',
           animated: true,
-          markerEnd: { type: MarkerType.ArrowClosed, color: '#f59e0b' },
-          style: { stroke: '#f59e0b' }
+          markerEnd: { type: MarkerType.ArrowClosed, color: '#B37422' },
+          style: { stroke: '#B37422' }
         },
         {
           id: 'e-prop-buyer',
@@ -381,8 +381,8 @@ export default function OwnershipGraph({ data }) {
           target: 'buyer',
           label: 'transferred to',
           animated: true,
-          markerEnd: { type: MarkerType.ArrowClosed, color: '#10b981' },
-          style: { stroke: '#10b981' }
+          markerEnd: { type: MarkerType.ArrowClosed, color: '#237845' },
+          style: { stroke: '#237845' }
         }
       ];
     }
@@ -392,17 +392,17 @@ export default function OwnershipGraph({ data }) {
       const tgt = resolveNodeId(rel.target);
 
       // Color coding edges by connection type
-      let strokeColor = '#6366f1'; // Indigo default
+      let strokeColor = '#1A5490'; // Legal Navy default
       const labelLower = (rel.label || '').toLowerCase();
       
       if (labelLower.includes('sell') || labelLower.includes('own') || labelLower.includes('vendor')) {
-        strokeColor = '#f59e0b'; // Amber for ownership
+        strokeColor = '#B37422'; // Amber for ownership
       } else if (labelLower.includes('transfer') || labelLower.includes('buy') || labelLower.includes('convey')) {
-        strokeColor = '#10b981'; // Green for transfer
+        strokeColor = '#237845'; // Forest Green for transfer
       } else if (labelLower.includes('pay') || labelLower.includes('price') || labelLower.includes('consideration')) {
-        strokeColor = '#34d399'; // Emerald for payment
+        strokeColor = '#2E7D32'; // Payment
       } else if (labelLower.includes('witness')) {
-        strokeColor = '#a78bfa'; // Purple for witnesses
+        strokeColor = '#6D3DA8'; // Purple for witnesses
       }
       
       return {
@@ -446,7 +446,7 @@ export default function OwnershipGraph({ data }) {
         fitViewOptions={{ padding: 0.15 }}
         proOptions={{ hideAttribution: true }}
       >
-        <Background color="#ffffff" gap={16} size={1} opacity={0.03} />
+        <Background variant="dots" gap={18} size={1.5} color="#D1C8BD" />
         <Controls className="react-flow__controls" />
       </ReactFlow>
     </div>

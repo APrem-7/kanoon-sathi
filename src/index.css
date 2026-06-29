@@ -4,41 +4,41 @@
 
 /* ── CSS Custom Properties ── */
 :root {
-  /* Primary palette – Slate/White */
-  --color-bg-primary: #f8fafc;
-  --color-bg-secondary: #f1f5f9;
-  --color-bg-tertiary: #e2e8f0;
-  --color-bg-elevated: #ffffff;
-  --color-bg-surface: rgba(255, 255, 255, 0.7);
+  /* Brand Theme: Beige (Linen / Parchment) Backgrounds */
+  --color-bg-primary: #FAF6EE;      /* Warm cream beige background */
+  --color-bg-secondary: #EFE7D8;    /* Soothing medium beige parchment */
+  --color-bg-tertiary: #E0D5BE;     /* Warm dark beige paper */
+  --color-bg-elevated: #ffffff;     /* Clean white for panels and cards */
+  --color-bg-surface: rgba(255, 255, 255, 0.85);
 
-  /* Accent – Indigo */
-  --color-accent: #4f46e5;
-  --color-accent-light: #6366f1;
-  --color-accent-dark: #4338ca;
-  --color-accent-glow: rgba(79, 70, 229, 0.15);
-  --color-accent-subtle: rgba(79, 70, 229, 0.08);
+  /* Brand Theme: Corporate Navy & Royal Blue Accent */
+  --color-accent: #1E3A8A;          /* Deep Corporate Navy Blue */
+  --color-accent-light: #2563EB;    /* Royal Blue accent */
+  --color-accent-dark: #172554;     /* Dark Blue Brand */
+  --color-accent-glow: rgba(30, 58, 138, 0.15);
+  --color-accent-subtle: rgba(30, 58, 138, 0.08);
 
-  /* Success / Status */
-  --color-success: #059669;
-  --color-success-glow: rgba(5, 150, 105, 0.15);
-  --color-warning: #d97706;
-  --color-error: #dc2626;
-  --color-error-glow: rgba(220, 38, 38, 0.15);
-  --color-info: #2563eb;
-  --color-info-glow: rgba(37, 99, 235, 0.15);
-  --color-processing: #7c3aed;
-  --color-processing-glow: rgba(124, 58, 237, 0.15);
+  /* Status Colors */
+  --color-success: #237845;         /* Deep Forest Green */
+  --color-success-glow: rgba(35, 120, 69, 0.12);
+  --color-warning: #B37422;         /* Amber Gold */
+  --color-error: #B52D2D;           /* Deep Crimson */
+  --color-error-glow: rgba(181, 45, 45, 0.12);
+  --color-info: #1D4ED8;            /* Information Blue */
+  --color-info-glow: rgba(29, 78, 216, 0.12);
+  --color-processing: #6D3DA8;      /* Royal Violet */
+  --color-processing-glow: rgba(109, 61, 168, 0.12);
 
-  /* Text */
-  --color-text-primary: #0f172a;
-  --color-text-secondary: #475569;
-  --color-text-muted: #64748b;
-  --color-text-accent: #4338ca;
+  /* Text Colors */
+  --color-text-primary: #0F172A;    /* Dark Charcoal Slate */
+  --color-text-secondary: #3F4E5E;  /* Warm Slate */
+  --color-text-muted: #6C7E8F;      /* Soft Muted Gray */
+  --color-text-accent: #1E3A8A;
 
-  /* Borders */
-  --color-border: rgba(15, 23, 42, 0.1);
-  --color-border-accent: rgba(79, 70, 229, 0.3);
-  --color-border-hover: rgba(15, 23, 42, 0.15);
+  /* Blue-tinted Borders */
+  --color-border: rgba(30, 58, 138, 0.08);
+  --color-border-accent: rgba(30, 58, 138, 0.25);
+  --color-border-hover: rgba(30, 58, 138, 0.15);
 
   /* Typography */
   --font-display: 'Outfit', sans-serif;
@@ -61,12 +61,12 @@
   --radius-xl: 24px;
   --radius-full: 9999px;
 
-  /* Shadows */
-  --shadow-sm: 0 1px 2px rgba(15, 23, 42, 0.05);
-  --shadow-md: 0 4px 6px -1px rgba(15, 23, 42, 0.1), 0 2px 4px -1px rgba(15, 23, 42, 0.06);
-  --shadow-lg: 0 10px 15px -3px rgba(15, 23, 42, 0.1), 0 4px 6px -2px rgba(15, 23, 42, 0.05);
-  --shadow-accent: 0 4px 14px 0 rgba(79, 70, 229, 0.39);
-  --shadow-glow: 0 0 40px rgba(79, 70, 229, 0.1);
+  /* Shadows with Soft Blue/Gold Tints */
+  --shadow-sm: 0 1px 3px rgba(30, 58, 138, 0.03);
+  --shadow-md: 0 4px 8px -2px rgba(30, 58, 138, 0.06), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+  --shadow-lg: 0 12px 20px -4px rgba(30, 58, 138, 0.1), 0 4px 8px -2px rgba(0, 0, 0, 0.05);
+  --shadow-accent: 0 4px 14px 0 rgba(30, 58, 138, 0.25);
+  --shadow-glow: 0 0 40px rgba(30, 58, 138, 0.05);
 
   /* Transitions */
   --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
@@ -106,8 +106,8 @@ body::before {
   position: fixed;
   inset: 0;
   background:
-    radial-gradient(circle at 50% -20%, rgba(79, 70, 229, 0.08), transparent 60%),
-    radial-gradient(circle at 100% 100%, rgba(14, 165, 233, 0.05), transparent 50%);
+    radial-gradient(circle at 50% -20%, rgba(30, 58, 138, 0.08), transparent 60%),
+    radial-gradient(circle at 100% 100%, rgba(37, 99, 235, 0.03), transparent 50%);
   z-index: -1;
   pointer-events: none;
 }

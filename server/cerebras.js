@@ -67,7 +67,7 @@ export async function analyzeLegalDocument(ocrText) {
       messages: [{ role: "user", content: prompt }],
       model: "gpt-oss-120b",
       temperature: 0.1, // low temp for deterministic JSON extraction
-      max_completion_tokens: 2000,
+      max_completion_tokens: 4096,
       response_format: { type: "json_object" }
     });
 
