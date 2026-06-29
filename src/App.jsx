@@ -10,6 +10,8 @@ import EntitiesView from './components/OCRResult/EntitiesView';
 import { analyzeDocument } from './api/client';
 import { FileText, Network, Calendar, Database, AlignLeft } from 'lucide-react';
 import './index.css';
+import './components/OCRResult/Results.css';
+
 
 function App() {
   const [currentView, setCurrentView] = useState('upload'); // 'upload', 'processing', 'results'
@@ -102,55 +104,67 @@ function App() {
               </div>
 
               {isAnalyzing ? (
-                <div className="flex flex-col items-center justify-center py-20 space-y-4">
-                  <div className="w-12 h-12 border-4 border-indigo-500/20 border-t-indigo-500 rounded-full animate-spin"></div>
-                  <h3 className="text-xl font-semibold text-white">Cerebras AI is analyzing the document...</h3>
-                  <p className="text-slate-400">Extracting legal intelligence and building the knowledge graph.</p>
+                <div className="analysis-loading-container animate-fadeIn">
+                  <div className="analysis-spinner-wrapper">
+                    <div className="analysis-spinner-ring"></div>
+                    <div className="analysis-spinner-ring"></div>
+                    <div className="analysis-spinner-ring"></div>
+                    <div className="analysis-spinner-ring"></div>
+                    <div className="analysis-spinner-icon">
+                      <FileText size={28} />
+                    </div>
+                  </div>
+                  <h3 className="analysis-loading-title">Cerebras AI is analyzing the document...</h3>
+                  <p className="analysis-loading-subtitle">Extracting legal intelligence, mapping property boundaries, and building the ownership graph.</p>
                 </div>
               ) : (
                 <>
                   {analysisError && (
-                    <div className="bg-red-500/10 border border-red-500/20 text-red-400 p-4 rounded-xl mb-6 flex items-start gap-3">
-                      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="shrink-0 mt-0.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-                      <div>
-                        <h4 className="font-semibold text-red-300">Analysis Failed</h4>
-                        <p className="text-sm opacity-90 mt-1">{analysisError}</p>
-                        <p className="text-sm mt-2">Falling back to raw extracted text. Please check your backend logs or Cerebras API key.</p>
+                    <div className="analysis-error-panel">
+                      <div className="analysis-error-icon">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                      </div>
+                      <div className="analysis-error-content">
+                        <h4>Analysis Failed</h4>
+                        <div className="analysis-error-desc">{analysisError}</div>
+                        <p className="analysis-error-fallback">Falling back to raw extracted text. Please check your backend logs or Cerebras API key.</p>
                       </div>
                     </div>
                   )}
 
-                  <div className="results-tabs flex flex-wrap gap-2 mb-6">
-                    <button 
-                      className={`flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition-colors ${activeTab === 'summary' ? 'bg-indigo-500/20 text-indigo-400 border border-indigo-500/30' : 'text-slate-400 hover:text-white glass'}`}
-                      onClick={() => setActiveTab('summary')}
-                    >
-                      <FileText size={16} /> AI Summary
-                    </button>
-                    <button 
-                      className={`flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition-colors ${activeTab === 'graph' ? 'bg-indigo-500/20 text-indigo-400 border border-indigo-500/30' : 'text-slate-400 hover:text-white glass'}`}
-                      onClick={() => setActiveTab('graph')}
-                    >
-                      <Network size={16} /> Ownership Graph
-                    </button>
-                    <button 
-                      className={`flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition-colors ${activeTab === 'timeline' ? 'bg-indigo-500/20 text-indigo-400 border border-indigo-500/30' : 'text-slate-400 hover:text-white glass'}`}
-                      onClick={() => setActiveTab('timeline')}
-                    >
-                      <Calendar size={16} /> Timeline
-                    </button>
-                    <button 
-                      className={`flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition-colors ${activeTab === 'entities' ? 'bg-indigo-500/20 text-indigo-400 border border-indigo-500/30' : 'text-slate-400 hover:text-white glass'}`}
-                      onClick={() => setActiveTab('entities')}
-                    >
-                      <Database size={16} /> Entities
-                    </button>
-                    <button 
-                      className={`flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition-colors ${activeTab === 'raw' ? 'bg-indigo-500/20 text-indigo-400 border border-indigo-500/30' : 'text-slate-400 hover:text-white glass'}`}
-                      onClick={() => setActiveTab('raw')}
-                    >
-                      <AlignLeft size={16} /> Raw OCR
-                    </button>
+                  <div className="results-tabs-wrapper">
+                    <div className="results-tabs-list">
+                      <button 
+                        className={`results-tab-trigger ${activeTab === 'summary' ? 'active' : ''}`}
+                        onClick={() => setActiveTab('summary')}
+                      >
+                        <FileText size={16} /> AI Summary
+                      </button>
+                      <button 
+                        className={`results-tab-trigger ${activeTab === 'graph' ? 'active' : ''}`}
+                        onClick={() => setActiveTab('graph')}
+                      >
+                        <Network size={16} /> Ownership Graph
+                      </button>
+                      <button 
+                        className={`results-tab-trigger ${activeTab === 'timeline' ? 'active' : ''}`}
+                        onClick={() => setActiveTab('timeline')}
+                      >
+                        <Calendar size={16} /> Timeline
+                      </button>
+                      <button 
+                        className={`results-tab-trigger ${activeTab === 'entities' ? 'active' : ''}`}
+                        onClick={() => setActiveTab('entities')}
+                      >
+                        <Database size={16} /> Entities
+                      </button>
+                      <button 
+                        className={`results-tab-trigger ${activeTab === 'raw' ? 'active' : ''}`}
+                        onClick={() => setActiveTab('raw')}
+                      >
+                        <AlignLeft size={16} /> Raw OCR
+                      </button>
+                    </div>
                   </div>
 
                   <div>
@@ -160,6 +174,7 @@ function App() {
                     {activeTab === 'entities' && (parsedData ? <EntitiesView data={parsedData} /> : <div className="glass p-6 text-slate-400">No entities data available.</div>)}
                     {activeTab === 'raw' && <TextViewer text={jobData?.text} jobId={uploadInfo?.serialNo} />}
                   </div>
+
                 </>
               )}
             </div>
