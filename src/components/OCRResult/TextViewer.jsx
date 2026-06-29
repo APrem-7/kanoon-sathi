@@ -1,18 +1,25 @@
 import React, { useState } from 'react';
 import './TextViewer.css';
 
-export default function TextViewer({ text, jobId }) {
+export default function TextViewer({ text }) {
+  // text is always an array of { text, serialNo, fileName } objects (normalized in App.jsx)
+  const docsList = text || [];
+  const [activeIdx, setActiveIdx] = useState(0);
   const [copied, setCopied] = useState(false);
+
+  const activeDoc = docsList[activeIdx] || { text: '', serialNo: 'unknown', fileName: 'document' };
+  const activeText = activeDoc.text || 'No text extracted.';
+  const activeJobId = activeDoc.serialNo;
 
   const handleCopy = async () => {
     try {
-      await navigator.clipboard.writeText(text);
+      await navigator.clipboard.writeText(activeText);
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
     } catch (err) {
       // Fallback
       const ta = document.createElement('textarea');
-      ta.value = text;
+      ta.value = activeText;
       document.body.appendChild(ta);
       ta.select();
       document.execCommand('copy');
@@ -25,11 +32,11 @@ export default function TextViewer({ text, jobId }) {
   const handleDownload = (format) => {
     let content, mimeType, ext;
     if (format === 'json') {
-      content = JSON.stringify({ job_id: jobId, text }, null, 2);
+      content = JSON.stringify({ serial_no: activeJobId, fileName: activeDoc.fileName, text: activeText }, null, 2);
       mimeType = 'application/json';
       ext = 'json';
     } else {
-      content = text;
+      content = activeText;
       mimeType = 'text/plain';
       ext = 'txt';
     }
@@ -38,15 +45,17 @@ export default function TextViewer({ text, jobId }) {
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `ocr-result-${jobId || 'output'}.${ext}`;
+    a.download = `ocr-result-${activeJobId || 'output'}.${ext}`;
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
   };
 
+  const isMultiple = docsList.length > 1;
+
   return (
-    <div className="text-viewer" id="text-viewer">
+    <div className="text-viewer animate-fadeIn" id="text-viewer">
       <div className="text-viewer-header">
         <div className="text-viewer-title">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -55,7 +64,7 @@ export default function TextViewer({ text, jobId }) {
             <line x1="16" y1="13" x2="8" y2="13" />
             <line x1="16" y1="17" x2="8" y2="17" />
           </svg>
-          Extracted Text
+          Extracted OCR Text
         </div>
         <div className="text-viewer-actions">
           <button
@@ -65,7 +74,7 @@ export default function TextViewer({ text, jobId }) {
           >
             {copied ? (
               <>
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                   <polyline points="20 6 9 17 4 12" />
                 </svg>
                 Copied
@@ -99,8 +108,26 @@ export default function TextViewer({ text, jobId }) {
         </div>
       </div>
 
+      {/* Multiple Documents Tab Selector */}
+      {isMultiple && (
+        <div className="text-viewer-selector-bar">
+          <span className="text-viewer-selector-label">Deeds:</span>
+          <div className="text-viewer-selector-buttons">
+            {docsList.map((doc, idx) => (
+              <button
+                key={doc.serialNo || idx}
+                className={`text-viewer-selector-btn ${idx === activeIdx ? 'active' : ''}`}
+                onClick={() => setActiveIdx(idx)}
+              >
+                {doc.fileName} ({doc.serialNo})
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
+
       <div className="text-viewer-content" id="extracted-text-content">
-        {text || 'No text extracted.'}
+        {activeText}
       </div>
     </div>
   );

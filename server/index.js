@@ -22,7 +22,7 @@ const S3_BUCKET = process.env.S3_BUCKET || 'lawdocuments2026';
 const DYNAMODB_TABLE = process.env.DYNAMODB_TABLE || 'kanoon-saathi-jobs';
 
 const awsConfig = { region: process.env.AWS_REGION || 'ap-south-1' };
-const s3     = new S3Client(awsConfig);
+const s3 = new S3Client(awsConfig);
 const dynamo = DynamoDBDocumentClient.from(new DynamoDBClient(awsConfig));
 
 // ─────────────────────────────────────────────
@@ -51,24 +51,28 @@ app.use(express.json());
 // ─────────────────────────────────────────────
 // POST /api/upload – Proxy file upload to AWS
 // ─────────────────────────────────────────────
-app.post('/api/upload', upload.single('file'), async (req, res) => {
+app.post('/api/upload', upload.array('file'), async (req, res) => {
   try {
     const { serial_no } = req.body;
-    const file = req.file;
+    const files = req.files;
 
     if (!serial_no) return res.status(400).json({ error: 'serial_no is required' });
-    if (!file)      return res.status(400).json({ error: 'file is required' });
+    if (!files || files.length === 0) return res.status(400).json({ error: 'file is required' });
 
     const form = new globalThis.FormData();
     form.append('serial_no', serial_no);
-    form.append('file', new Blob([file.buffer], { type: file.mimetype }), file.originalname);
+
+    files.forEach((file) => {
+      form.append('file', new Blob([file.buffer], { type: file.mimetype }), file.originalname);
+    });
 
     const response = await fetch(PROPERTY_API, { method: 'POST', body: form });
-    const data     = await response.json();
+    const data = await response.json();
 
     if (response.ok) {
-      const job = store.createJob(serial_no, file.originalname, data.s3_path || '');
-      console.log(`[UPLOAD] serial_no=${serial_no} | file=${file.originalname} | s3_path=${data.s3_path || 'unknown'}`);
+      const displayFilename = data.file_name || files[0].originalname;
+      const job = store.createJob(serial_no, displayFilename, data.s3_path || '');
+      console.log(`[UPLOAD] serial_no=${serial_no} | file=${displayFilename} | s3_path=${data.s3_path || 'unknown'}`);
       console.log(`[UPLOAD] AWS response:`, JSON.stringify(data));
 
       // Poll DynamoDB until Lambda 2 marks status=ocr_completed, then fetch S3
@@ -121,11 +125,11 @@ app.post('/api/analyze', async (req, res) => {
     if (!text) {
       return res.status(400).json({ error: 'OCR text is required' });
     }
-    
+
     console.log(`[ANALYZE] Received request with text length=${text.length}`);
     const structuredData = await analyzeLegalDocument(text);
     console.log(`[ANALYZE] Success: ${JSON.stringify(structuredData).substring(0, 100)}...`);
-    
+
     return res.json(structuredData);
   } catch (error) {
     console.error('[ANALYZE ERROR]', error.message);
@@ -215,9 +219,9 @@ app.get('/api/jobs/:serialNo', async (req, res) => {
 async function hydrateFromS3(serialNo, s3Key) {
   try {
     console.log(`[HYDRATE] Fetching s3://${S3_BUCKET}/${s3Key} for serialNo=${serialNo}`);
-    const s3Resp  = await s3.send(new GetObjectCommand({ Bucket: S3_BUCKET, Key: s3Key }));
+    const s3Resp = await s3.send(new GetObjectCommand({ Bucket: S3_BUCKET, Key: s3Key }));
     const bodyStr = await streamToString(s3Resp.Body);
-    const parsed  = JSON.parse(bodyStr);
+    const parsed = JSON.parse(bodyStr);
     const ocrText = parsed.ocr_text || parsed.text;
     if (ocrText) {
       console.log(`[HYDRATE] SUCCESS serialNo=${serialNo} | text length=${ocrText.length}`);
@@ -383,13 +387,13 @@ function streamToString(stream) {
   return new Promise((resolve, reject) => {
     const chunks = [];
     stream.on('data', (c) => chunks.push(c));
-    stream.on('end',  ()  => resolve(Buffer.concat(chunks).toString('utf-8')));
+    stream.on('end', () => resolve(Buffer.concat(chunks).toString('utf-8')));
     stream.on('error', reject);
   });
 }
 
 app.listen(PORT, () => {
-  console.log(`\n  ⚖️  Kanoon Sathi Backend running on http://localhost:${PORT}`);
+  console.log(`\n  ⚖️  Kanoon Saathi Backend running on http://localhost:${PORT}`);
   console.log(`  📤 Upload:      POST /api/upload`);
   console.log(`  📡 Webhook:     POST /api/ocr/webhook`);
   console.log(`  📋 All jobs:    GET  /api/jobs`);

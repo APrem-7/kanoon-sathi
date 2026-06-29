@@ -13,7 +13,7 @@ export default function Header({ currentView, onViewChange }) {
           </svg>
         </div>
         <div>
-          <h1 className="header-title">Kanoon Sathi</h1>
+          <h1 className="header-title">Kanoon Saathi</h1>
           <p className="header-subtitle">Legal Document Intelligence</p>
         </div>
       </div>

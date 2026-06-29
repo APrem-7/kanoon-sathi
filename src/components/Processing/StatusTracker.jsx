@@ -5,8 +5,8 @@ import './StatusTracker.css';
 const PIPELINE_STEPS = [
   {
     id: 'upload',
-    title: 'Document Uploaded',
-    desc: 'File received and stored in S3 raw folder',
+    title: 'Documents Uploaded & Merged',
+    desc: 'Deeds received, merged by AWS Lambda, and stored in S3 raw folder',
     icon: (
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
         <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
@@ -17,8 +17,8 @@ const PIPELINE_STEPS = [
   },
   {
     id: 'ocr',
-    title: 'OCR Processing',
-    desc: 'Amazon Textract is extracting text from the document',
+    title: 'Textract OCR Processing',
+    desc: 'Amazon Textract is extracting text from the merged document pages',
     icon: (
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
         <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
@@ -29,8 +29,8 @@ const PIPELINE_STEPS = [
   },
   {
     id: 'extract',
-    title: 'Text Extraction',
-    desc: 'Merging and processing extracted text from all pages',
+    title: 'Text Extraction & Caching',
+    desc: 'Merging extracted text pages and caching in database store',
     icon: (
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
         <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
@@ -42,10 +42,10 @@ const PIPELINE_STEPS = [
   },
   {
     id: 'ready',
-    title: 'Results Ready',
-    desc: 'Extracted text processed and analysis complete',
+    title: 'Title Group Ready',
+    desc: 'OCR extraction complete and ready for AI synthesis',
     icon: (
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
         <polyline points="20 6 9 17 4 12" />
       </svg>
     ),
@@ -53,6 +53,9 @@ const PIPELINE_STEPS = [
 ];
 
 export default function StatusTracker({ uploadInfo, onComplete }) {
+  const isGroup = !!uploadInfo?.queue;
+  const items = isGroup ? uploadInfo.queue : [uploadInfo];
+
   const [currentStep, setCurrentStep] = useState(0);
   const [jobData, setJobData] = useState(null);
   const [completed, setCompleted] = useState(false);
@@ -61,29 +64,23 @@ export default function StatusTracker({ uploadInfo, onComplete }) {
   useEffect(() => {
     if (!uploadInfo?.serialNo) return;
 
-    // Step 0 is always done (upload)
     setCurrentStep(1);
-
-    // Simulate step progression while polling
     const stepTimer = setTimeout(() => setCurrentStep(2), 3000);
 
-    // Start polling
+    // Poll for the single merged job ID
     cleanupRef.current = pollJobStatus(
       uploadInfo.serialNo,
-      // onUpdate
       (job) => {
         setJobData(job);
         if (job.status === 'processing') {
           setCurrentStep(2);
         }
       },
-      // onComplete
       (job) => {
         setCurrentStep(4);
         setJobData(job);
         setCompleted(true);
       },
-      // onError
       (err) => {
         console.error('Polling error:', err);
       }
@@ -105,19 +102,31 @@ export default function StatusTracker({ uploadInfo, onComplete }) {
   return (
     <div className="status-tracker" id="status-tracker">
       <div className="status-header">
-        <h2>Processing Document</h2>
-        <p>Your document is being processed through the OCR pipeline</p>
+        <h2>
+          {isGroup 
+            ? 'Processing Title Chain Group' 
+            : 'Processing Document'}
+        </h2>
+        <p>
+          {isGroup 
+            ? 'Your group of documents has been merged and is being processed through the OCR pipeline' 
+            : 'Your document is being processed through the OCR pipeline'}
+        </p>
+        
         {uploadInfo && (
           <div className="status-file-badge">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
               <polyline points="14 2 14 8 20 8" />
             </svg>
-            {uploadInfo.fileName} — Serial: {uploadInfo.serialNo}
+            {isGroup 
+              ? `Unified Job Serial: ${uploadInfo.serialNo} (${items.length} Deeds merged)`
+              : `${uploadInfo.fileName} — Serial: ${uploadInfo.serialNo}`}
           </div>
         )}
       </div>
 
+      {/* Unified step pipeline */}
       <div className="status-pipeline">
         {PIPELINE_STEPS.map((step, index) => {
           const state = getStepState(index);
@@ -153,10 +162,38 @@ export default function StatusTracker({ uploadInfo, onComplete }) {
         })}
       </div>
 
+      {/* Group Deeds Queue Details */}
+      {isGroup && (
+        <div className="status-group-list" style={{ marginTop: 'var(--space-xl)' }}>
+          <h3 style={{ fontSize: '0.85rem', color: 'var(--color-text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 'var(--space-md)' }}>
+            Deeds Ingested in this Title Chain
+          </h3>
+          {items.map(item => (
+            <div key={item.serialNo} className="status-group-row completed" style={{ marginBottom: '6px' }}>
+              <div className="status-row-info">
+                <div className="status-row-filename">{item.file?.name || item.fileName}</div>
+                <div className="status-row-serial">Serial Number: {item.serialNo}</div>
+              </div>
+              <div className="status-row-badge">
+                <span className="badge-success">Merged</span>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+
       {completed && (
         <div className="status-complete-msg">
-          <h3>🎉 OCR Processing Complete</h3>
-          <p>Your document has been successfully processed. View the extracted text and sale deed analysis below.</p>
+          <h3>
+            {isGroup 
+              ? '🎉 Title Group OCR Complete' 
+              : '🎉 OCR Processing Complete'}
+          </h3>
+          <p>
+            {isGroup 
+              ? 'All pages have been compiled and processed. Let\'s perform the AI synthesis and view the ownership timeline.'
+              : 'Your document has been successfully processed. View the extracted text and sale deed analysis below.'}
+          </p>
           <button
             className="status-view-btn"
             onClick={() => onComplete(jobData)}
@@ -166,7 +203,7 @@ export default function StatusTracker({ uploadInfo, onComplete }) {
               <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
               <circle cx="12" cy="12" r="3" />
             </svg>
-            View Results & Analysis
+            {isGroup ? 'Generate Unified Title Report' : 'View Results & Analysis'}
           </button>
         </div>
       )}

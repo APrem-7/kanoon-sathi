@@ -31,30 +31,27 @@ function App() {
   // Handle OCR completion
   const handleProcessingComplete = async (job) => {
     setJobData(job);
-    
-    if (job.text) {
-      try {
-        setIsAnalyzing(true);
-        setAnalysisError(null);
-        // We stay on the "processing" view (or transition to a specialized analyzing view)
-        // For simplicity, we can move to 'results' but show a loading overlay for LLM
-        setCurrentView('results');
-        
-        const structuredData = await analyzeDocument(job.text);
-        setParsedData(structuredData);
-      } catch (error) {
-        console.error("Failed to analyze document with LLM:", error);
-        setAnalysisError(error.message || 'Analysis failed');
-        setActiveTab('raw'); // Fallback to raw OCR tab
-      } finally {
-        setIsAnalyzing(false);
+    setCurrentView('results');
+    setIsAnalyzing(true);
+    setAnalysisError(null);
+
+    try {
+      if (!job || !job.text) {
+        throw new Error('No extracted OCR text found in the completed job.');
       }
-    } else {
-      setCurrentView('results');
+
+      // The job text contains the combined text of all merged documents.
+      // Run single analysis using Cerebras LLM.
+      const structuredData = await analyzeDocument(job.text);
+      setParsedData(structuredData);
+    } catch (error) {
+      console.error("Failed to analyze combined documents with LLM:", error);
+      setAnalysisError(error.message || 'Analysis failed');
+      setActiveTab('raw'); // Fallback to raw OCR tab
+    } finally {
+      setIsAnalyzing(false);
     }
   };
-
-
 
   // Allow resetting flow
   const handleReset = () => {
@@ -100,8 +97,13 @@ function App() {
 
               <div className="results-header">
                 <h2>Analysis Complete</h2>
-                <p>Document: {uploadInfo?.fileName || 'Unknown'} (Serial: {uploadInfo?.serialNo || 'Unknown'})</p>
+                <p>
+                  {uploadInfo?.queue
+                    ? `Deeds Group: ${uploadInfo.queue.map(i => `${i.file?.name || i.fileName} (${i.serialNo})`).join(', ')}`
+                    : `Document: ${uploadInfo?.fileName || 'Unknown'} (Serial: ${uploadInfo?.serialNo || 'Unknown'})`}
+                </p>
               </div>
+
 
               {isAnalyzing ? (
                 <div className="analysis-loading-container animate-fadeIn">
@@ -114,6 +116,16 @@ function App() {
                       <FileText size={28} />
                     </div>
                   </div>
+                  <h3 className="analysis-loading-title">
+                    {uploadInfo?.queue 
+                      ? 'Cerebras AI is compiling and synthesizing title deeds...' 
+                      : 'Cerebras AI is analyzing the document...'}
+                  </h3>
+                  <p className="analysis-loading-subtitle">
+                    {uploadInfo?.queue 
+                      ? 'Analyzing the merged deeds to construct the unified ownership timeline and property graph.' 
+                      : 'Extracting legal intelligence, mapping property boundaries, and building the ownership graph.'}
+                  </p>
                   <h3 className="analysis-loading-title">Cerebras AI is analyzing the document...</h3>
                   <p className="analysis-loading-subtitle">Extracting legal intelligence, mapping property boundaries, and building the ownership graph.</p>
                 </div>
@@ -127,6 +139,7 @@ function App() {
                       <div className="analysis-error-content">
                         <h4>Analysis Failed</h4>
                         <div className="analysis-error-desc">{analysisError}</div>
+                        <p className="analysis-error-fallback">Falling back to raw extracted text. Please check your backend logs or Cerebras API key configuration.</p>
                         <p className="analysis-error-fallback">Falling back to raw extracted text. Please check your backend logs or Cerebras API key.</p>
                       </div>
                     </div>
@@ -172,7 +185,12 @@ function App() {
                     {activeTab === 'graph' && (parsedData ? <OwnershipGraph data={parsedData} /> : <div className="glass p-6 text-slate-400">No graph data available.</div>)}
                     {activeTab === 'timeline' && (parsedData ? <TimelineView timeline={parsedData.timeline} /> : <div className="glass p-6 text-slate-400">No timeline data available.</div>)}
                     {activeTab === 'entities' && (parsedData ? <EntitiesView data={parsedData} /> : <div className="glass p-6 text-slate-400">No entities data available.</div>)}
-                    {activeTab === 'raw' && <TextViewer text={jobData?.text} jobId={uploadInfo?.serialNo} />}
+                    {activeTab === 'raw' && (
+                      <TextViewer 
+                        text={[{ text: jobData?.text, serialNo: uploadInfo?.serialNo, fileName: uploadInfo?.fileName }]} 
+                      />
+                    )}
+
                   </div>
 
                 </>
