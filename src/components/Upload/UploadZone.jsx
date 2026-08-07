@@ -160,7 +160,7 @@ export default function UploadZone({ onUploadSuccess }) {
     <div className="upload-container" id="upload-zone">
       <div className="upload-header">
         <h2>Ingest Deeds</h2>
-        <p>Ingest one or multiple documents for the same property to compile a complete transaction title chain</p>
+        <p>Upload deeds for one or multiple properties — the system will automatically detect and group them</p>
       </div>
 
       {/* Drop Zone */}
@@ -261,7 +261,7 @@ export default function UploadZone({ onUploadSuccess }) {
         <div className="upload-queue-container">
           <div className="upload-queue-title">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1-2.5-2.5Z"/><path d="M6 6h10"/><path d="M6 10h10"/></svg>
-            Group Title Chain Documents ({queue.length})
+            Queued Documents ({queue.length})
           </div>
           <div className="upload-queue-list">
             {queue.map(item => (

@@ -6,7 +6,7 @@ import { S3Client, GetObjectCommand, ListObjectsV2Command } from '@aws-sdk/clien
 import { DynamoDBClient, ListTablesCommand } from '@aws-sdk/client-dynamodb';
 import { DynamoDBDocumentClient, ScanCommand } from '@aws-sdk/lib-dynamodb';
 import { store } from './store.js';
-import { analyzeLegalDocument } from './cerebras.js';
+import { analyzeLegalDocument } from './gemini.js';
 
 const app = express();
 const PORT = 3001;
@@ -117,7 +117,7 @@ app.get('/api/jobs', (_req, res) => {
 });
 
 // ─────────────────────────────────────────────
-// POST /api/analyze – Analyze OCR text with Cerebras LLM
+// POST /api/analyze – Analyze OCR text with Gemini LLM
 // ─────────────────────────────────────────────
 app.post('/api/analyze', async (req, res) => {
   try {
@@ -128,7 +128,8 @@ app.post('/api/analyze', async (req, res) => {
 
     console.log(`[ANALYZE] Received request with text length=${text.length}`);
     const structuredData = await analyzeLegalDocument(text);
-    console.log(`[ANALYZE] Success: ${JSON.stringify(structuredData).substring(0, 100)}...`);
+    const propCount = structuredData.properties?.length || 0;
+    console.log(`[ANALYZE] Success: ${propCount} property group(s) | ${JSON.stringify(structuredData).substring(0, 150)}...`);
 
     return res.json(structuredData);
   } catch (error) {

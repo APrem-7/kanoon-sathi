@@ -11,12 +11,12 @@
   --color-bg-elevated: #ffffff;     /* Clean white for panels and cards */
   --color-bg-surface: rgba(255, 255, 255, 0.85);
 
-  /* Brand Theme: Corporate Navy & Royal Blue Accent */
-  --color-accent: #1E3A8A;          /* Deep Corporate Navy Blue */
-  --color-accent-light: #2563EB;    /* Royal Blue accent */
-  --color-accent-dark: #172554;     /* Dark Blue Brand */
-  --color-accent-glow: rgba(30, 58, 138, 0.15);
-  --color-accent-subtle: rgba(30, 58, 138, 0.08);
+  /* Brand Theme: Corporate Amber & Gold Accent */
+  --color-accent: #d97706;          /* Warm Amber Gold */
+  --color-accent-light: #f59e0b;    /* Bright Amber accent */
+  --color-accent-dark: #b45309;     /* Dark Amber Brand */
+  --color-accent-glow: rgba(217, 119, 6, 0.15);
+  --color-accent-subtle: rgba(217, 119, 6, 0.08);
 
   /* Status Colors */
   --color-success: #237845;         /* Deep Forest Green */
@@ -35,10 +35,10 @@
   --color-text-muted: #6C7E8F;      /* Soft Muted Gray */
   --color-text-accent: #1E3A8A;
 
-  /* Blue-tinted Borders */
-  --color-border: rgba(30, 58, 138, 0.08);
-  --color-border-accent: rgba(30, 58, 138, 0.25);
-  --color-border-hover: rgba(30, 58, 138, 0.15);
+  /* Warm Golden Borders */
+  --color-border: rgba(217, 119, 6, 0.10);
+  --color-border-accent: rgba(217, 119, 6, 0.28);
+  --color-border-hover: rgba(217, 119, 6, 0.18);
 
   /* Typography */
   --font-display: 'Outfit', sans-serif;
@@ -61,12 +61,12 @@
   --radius-xl: 24px;
   --radius-full: 9999px;
 
-  /* Shadows with Soft Blue/Gold Tints */
-  --shadow-sm: 0 1px 3px rgba(30, 58, 138, 0.03);
-  --shadow-md: 0 4px 8px -2px rgba(30, 58, 138, 0.06), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
-  --shadow-lg: 0 12px 20px -4px rgba(30, 58, 138, 0.1), 0 4px 8px -2px rgba(0, 0, 0, 0.05);
-  --shadow-accent: 0 4px 14px 0 rgba(30, 58, 138, 0.25);
-  --shadow-glow: 0 0 40px rgba(30, 58, 138, 0.05);
+  /* Shadows with Soft Gold Tints */
+  --shadow-sm: 0 1px 3px rgba(217, 119, 6, 0.04);
+  --shadow-md: 0 4px 8px -2px rgba(217, 119, 6, 0.08), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+  --shadow-lg: 0 12px 20px -4px rgba(217, 119, 6, 0.12), 0 4px 8px -2px rgba(0, 0, 0, 0.05);
+  --shadow-accent: 0 4px 14px 0 rgba(217, 119, 6, 0.25);
+  --shadow-glow: 0 0 40px rgba(217, 119, 6, 0.06);
 
   /* Transitions */
   --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
@@ -93,23 +93,11 @@ html {
 
 body {
   font-family: var(--font-body);
-  background: var(--color-bg-primary);
+  background: #fdfbf7;
   color: var(--color-text-primary);
   min-height: 100vh;
-  overflow-x: hidden;
+  overflow: hidden;
   line-height: 1.6;
-}
-
-/* Animated gradient background */
-body::before {
-  content: '';
-  position: fixed;
-  inset: 0;
-  background:
-    radial-gradient(circle at 50% -20%, rgba(30, 58, 138, 0.08), transparent 60%),
-    radial-gradient(circle at 100% 100%, rgba(37, 99, 235, 0.03), transparent 50%);
-  z-index: -1;
-  pointer-events: none;
 }
 
 #root {
