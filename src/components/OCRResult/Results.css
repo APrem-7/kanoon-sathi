@@ -182,6 +182,99 @@
   font-size: 0.875rem;
 }
 
+/* ── Property Selector (Multi-Property Navigation) ── */
+.property-selector-container {
+  margin-bottom: var(--space-lg);
+  background: rgba(15, 23, 42, 0.02);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-md);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  animation: fadeInUp 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.property-selector-label {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--color-accent);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin-bottom: var(--space-md);
+  padding-bottom: var(--space-sm);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.property-selector-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-sm);
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
+}
+
+.property-selector-pill {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  padding: 10px 18px;
+  border-radius: var(--radius-full);
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--color-text-secondary);
+  background: rgba(15, 23, 42, 0.02);
+  border: 1.5px solid var(--color-border);
+  cursor: pointer;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  white-space: nowrap;
+  max-width: 280px;
+}
+
+.property-selector-pill:hover {
+  color: var(--color-text-primary);
+  background: rgba(15, 23, 42, 0.05);
+  border-color: rgba(15, 23, 42, 0.15);
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+}
+
+.property-selector-pill.active {
+  color: var(--color-accent-dark);
+  background: var(--color-accent-subtle);
+  border-color: var(--color-border-accent);
+  box-shadow: 0 2px 12px var(--color-accent-glow), inset 0 1px 0 rgba(255, 255, 255, 0.5);
+}
+
+.property-pill-index {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  font-size: 0.7rem;
+  font-weight: 800;
+  flex-shrink: 0;
+  background: rgba(15, 23, 42, 0.06);
+  color: var(--color-text-muted);
+  transition: all 0.25s ease;
+}
+
+.property-selector-pill.active .property-pill-index {
+  background: var(--color-accent);
+  color: #fff;
+  box-shadow: 0 0 8px var(--color-accent-glow);
+}
+
+.property-pill-name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
 /* ── Results Tabs Navigation ── */
 .results-tabs-wrapper {
   margin-bottom: var(--space-xl);

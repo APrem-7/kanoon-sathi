@@ -99,7 +99,7 @@ export function pollJobStatus(serialNo, onUpdate, onComplete, onError) {
 }
 
 /**
- * Analyze OCR text with Cerebras LLM
+ * Analyze OCR text with Gemini LLM
  */
 export async function analyzeDocument(text) {
   const response = await fetch(`${API_BASE}/analyze`, {
