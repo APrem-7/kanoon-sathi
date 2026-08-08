@@ -1,5 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import DashboardLayout from './components/Layout/DashboardLayout';
+import AuthPage from './components/Auth/AuthPage';
 import UploadZone from './components/Upload/UploadZone';
 import StatusTracker from './components/Processing/StatusTracker';
 import TextViewer from './components/OCRResult/TextViewer';
@@ -8,12 +9,17 @@ import AISummary from './components/OCRResult/AISummary';
 import TimelineView from './components/OCRResult/TimelineView';
 import EntitiesView from './components/OCRResult/EntitiesView';
 import AnomaliesView from './components/OCRResult/AnomaliesView';
+import MyProfile from './components/Profile/MyProfile';
+import MyCases from './components/Cases/MyCases';
 import { analyzeDocument } from './api/client';
 import { FileText, Network, Calendar, Database, AlignLeft, MapPin, AlertTriangle } from 'lucide-react';
 import './index.css';
 import './components/OCRResult/Results.css';
 
 function App() {
+  // ── Authentication state ─────────────────────────────────────────────────
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+
   // ── OCR pipeline state (unchanged from original) ──────────────────────────
   const [currentView, setCurrentView] = useState('upload'); // 'upload', 'processing', 'results'
   const [uploadInfo, setUploadInfo] = useState(null);
@@ -27,6 +33,15 @@ function App() {
   // ── Dashboard UI state ────────────────────────────────────────────────────
   // 'dashboard' = show activity feed; 'ocr' = show OCR upload
   const [dashboardPanel, setDashboardPanel] = useState('dashboard');
+  
+  // Shared user profile state
+  const [profileData, setProfileData] = useState({
+    fullName: 'USER',
+    email: 'user@example.com',
+    role: 'Job Title / Role',
+    company: 'Organization Name',
+    practiceArea: 'Domain / Specialization'
+  });
 
   // Derive the currently selected property's data
   const parsedData = useMemo(() => {
@@ -103,17 +118,27 @@ function App() {
   };
 
   // Derive which panel to show in the layout
-  const activePanelForLayout =
-    dashboardPanel === 'ocr' || currentView === 'processing' || currentView === 'results'
-      ? currentView === 'upload' ? 'ocr' : currentView
-      : 'dashboard';
+  let activePanelForLayout = 'dashboard';
+  if (currentView === 'profile' || currentView === 'cases') {
+    activePanelForLayout = currentView;
+  } else if (dashboardPanel === 'ocr' || currentView === 'processing' || currentView === 'results') {
+    activePanelForLayout = currentView === 'upload' ? 'ocr' : currentView;
+  }
 
   const isMultiProperty = propertiesList.length > 1;
+
+  // Show auth gate if not authenticated
+  if (!isAuthenticated) {
+    return <AuthPage onLogin={() => setIsAuthenticated(true)} />;
+  }
 
   return (
     <DashboardLayout
       activePanel={activePanelForLayout}
       onToolSelect={handleToolSelect}
+      onLogout={() => setIsAuthenticated(false)}
+      onProfileSelect={() => setCurrentView('profile')}
+      onCasesSelect={() => setCurrentView('cases')}
     >
       {/* ── Upload View ─────────────────────────────────────────────────── */}
       {currentView === 'upload' && dashboardPanel === 'ocr' && (
@@ -271,6 +296,20 @@ function App() {
               </div>
             </>
           )}
+        </div>
+      )}
+      
+      {/* ── Profile View ─────────────────────────────────────────────────── */}
+      {currentView === 'profile' && (
+        <div className="animate-fadeIn">
+          <MyProfile profileData={profileData} setProfileData={setProfileData} />
+        </div>
+      )}
+
+      {/* ── Cases View ─────────────────────────────────────────────────── */}
+      {currentView === 'cases' && (
+        <div className="animate-fadeIn" style={{ height: '100%' }}>
+          <MyCases userName={profileData.fullName} />
         </div>
       )}
     </DashboardLayout>

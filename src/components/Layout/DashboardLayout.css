@@ -237,7 +237,7 @@
   padding: 0 20px;
   gap: 4px;
   flex-shrink: 0;
-  z-index: 90;
+  z-index: 20000;
 }
 
 .topnav-links {
@@ -368,7 +368,7 @@
   border: 1px solid #e8ecf0;
   border-radius: 10px;
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
-  z-index: 999;
+  z-index: 20001;
   overflow: hidden;
   animation: dropdown-in 0.15s ease;
 }
@@ -409,6 +409,8 @@
   padding: 18px 24px 16px;
   border-bottom: 1px solid rgba(217, 119, 6, 0.15);
   backdrop-filter: blur(8px);
+  position: relative;
+  z-index: 9999;
 }
 
 .workspace-header-top {
@@ -478,6 +480,7 @@
 /* State Dropdown */
 .state-dropdown-wrapper {
   position: relative;
+  z-index: 100;
 }
 
 .state-dropdown-btn {
@@ -527,14 +530,14 @@
 
 .state-dropdown-menu {
   position: absolute;
-  top: calc(100% + 6px);
+  top: 100%;
   left: 0;
   min-width: 200px;
   background: #ffffff;
   border: 1px solid #e2e8f0;
   border-radius: 10px;
   box-shadow: 0 12px 32px rgba(0, 0, 0, 0.12);
-  z-index: 500;
+  z-index: 10000;
   overflow: hidden;
   animation: dropdown-in 0.15s ease;
 }
@@ -571,6 +574,8 @@
   padding: 18px 24px 8px;
   background: rgba(255, 253, 245, 0.90);
   border-bottom: 1px solid rgba(217, 119, 6, 0.12);
+  position: relative;
+  z-index: 1;
 }
 
 .smart-tools-title {
@@ -587,6 +592,8 @@
   padding-bottom: 6px;
   scrollbar-width: thin;
   scrollbar-color: #e2e8f0 transparent;
+  position: relative;
+  z-index: 1;
 }
 
 .smart-tools-grid::-webkit-scrollbar {
@@ -617,6 +624,7 @@
   max-width: 160px;
   flex-shrink: 0;
   position: relative;
+  z-index: 1;
   overflow: hidden;
 }
 
@@ -694,8 +702,8 @@
    LOWER CONTENT AREA
    ══════════════════════════════════ */
 .dashboard-lower {
-  display: flex;
-  gap: 0;
+  display: grid;
+  grid-template-columns: 1fr;
   flex: 1;
   min-height: 0;
   overflow: hidden;
@@ -704,6 +712,7 @@
 /* Activity Panel */
 .activity-panel {
   flex: 1;
+  width: 100%;
   padding: 18px 20px;
   overflow-y: auto;
   min-width: 0;
@@ -795,36 +804,7 @@
   margin-top: 2px;
 }
 
-/* Stats Panel */
-.stats-panel {
-  width: 220px;
-  min-width: 220px;
-  border-left: 1px solid rgba(217, 119, 6, 0.12);
-  background: rgba(255, 253, 245, 0.95);
-  padding: 18px 16px;
-  overflow-y: auto;
-  flex-shrink: 0;
-}
-
-.stats-panel-block {
-  margin-bottom: 18px;
-}
-
-.stats-label {
-  font-size: 11.5px;
-  color: #6c7e8f;
-  font-weight: 500;
-  margin-bottom: 2px;
-}
-
-.stats-value {
-  font-family: 'Outfit', sans-serif;
-  font-size: 26px;
-  font-weight: 700;
-  color: #0f172a;
-  line-height: 1.1;
-}
-
+/* Stats panel removed — styles below kept for reference only */
 .stats-divider {
   height: 1px;
   background: #e8ecf0;
@@ -1098,10 +1078,6 @@
   .dashboard-sidebar {
     width: 180px;
     min-width: 180px;
-  }
-
-  .stats-panel {
-    display: none;
   }
 
   .smart-tools-grid {
