@@ -9,11 +9,9 @@ import {
   Search,
   Users,
   ChevronDown,
-  ChevronRight,
   MapPin,
   Upload,
   Calculator,
-  PenLine,
   UserCheck,
   Bell,
   FileCheck2,
@@ -26,7 +24,6 @@ import {
   ArrowRightLeft,
   LogOut,
   Settings,
-  CheckCircle,
 } from 'lucide-react';
 import './DashboardLayout.css';
 import AiChatView from './AiChatView';
@@ -107,13 +104,7 @@ const SMART_TOOLS = [
     icon: Calculator,
     color: 'blue',
   },
-  {
-    id: 'sale-agreement',
-    label: 'Draft a Sale Agreement',
-    sub: 'Draft a Sale Agreement',
-    icon: PenLine,
-    color: 'purple',
-  },
+
   {
     id: 'consult-lawyer',
     label: 'Consult a KA Land Lawyer',
@@ -130,11 +121,9 @@ const SMART_TOOLS = [
   },
 ];
 
-// ─── Mini Bar Chart ───────────────────────────────────────────────────────────
-const CHART_BARS = [40, 65, 50, 80, 55, 90, 70, 85, 60, 75];
 
 // ─── DashboardLayout Component ───────────────────────────────────────────────
-export default function DashboardLayout({ children, activePanel, onToolSelect }) {
+export default function DashboardLayout({ children, activePanel, onToolSelect, onLogout, onProfileSelect, onCasesSelect }) {
   const [selectedState, setSelectedState] = useState('KARNATAKA (KA)');
   const [stateDropdownOpen, setStateDropdownOpen] = useState(false);
   const [userDropdownOpen, setUserDropdownOpen] = useState(false);
@@ -186,12 +175,18 @@ export default function DashboardLayout({ children, activePanel, onToolSelect })
             { id: 'dashboard', label: 'Dashboard', Icon: LayoutDashboard },
             { id: 'ai-chat', label: 'AI Chat', Icon: MessageSquare },
             { id: 'my-cases', label: 'My Cases', Icon: Briefcase },
-            { id: 'my-profile', label: 'My Profile', Icon: User },
           ].map(({ id, label, Icon }) => (
             <button
               key={id}
               className={`sidebar-nav-item ${activeNavItem === id ? 'active' : ''}`}
-              onClick={() => setActiveNavItem(id)}
+              onClick={() => {
+                setActiveNavItem(id);
+                if (id === 'dashboard' && onToolSelect) {
+                  onToolSelect('back');
+                } else if (id === 'my-cases' && onCasesSelect) {
+                  onCasesSelect();
+                }
+              }}
               id={`sidebar-nav-${id}`}
             >
               <Icon size={16} />
@@ -270,13 +265,13 @@ export default function DashboardLayout({ children, activePanel, onToolSelect })
               </button>
               {userDropdownOpen && (
                 <div className="topnav-user-dropdown" id="user-dropdown-menu">
-                  <button className="topnav-user-dropdown-item">
+                  <button className="topnav-user-dropdown-item" onClick={() => { onProfileSelect && onProfileSelect(); setUserDropdownOpen(false); }}>
                     <User size={14} /> My Profile
                   </button>
                   <button className="topnav-user-dropdown-item">
                     <Settings size={14} /> Settings
                   </button>
-                  <button className="topnav-user-dropdown-item" style={{ color: '#ef4444' }}>
+                  <button className="topnav-user-dropdown-item" style={{ color: '#ef4444' }} onClick={onLogout} id="signout-btn">
                     <LogOut size={14} /> Sign Out
                   </button>
                 </div>
@@ -337,37 +332,42 @@ export default function DashboardLayout({ children, activePanel, onToolSelect })
 
                   {/* Flag icons cluster */}
                   <div className="state-flag-icons">
-                    <div className="state-flag-icon" title="India Map">🗺️</div>
                     <div className="state-flag-icon" title="Indian Flag">🇮🇳</div>
                   </div>
                 </div>
               </div>
 
               {/* Smart Tools */}
-              <div className="smart-tools-section">
-                <div className="smart-tools-title">Smart Tools</div>
-                <div className="smart-tools-grid">
-                  {SMART_TOOLS.map(({ id, label, sub, icon: Icon, color }) => (
-                    <button
-                      key={id}
-                      className={`tool-card ${color} ${activePanel === 'ocr' && id === 'ocr' ? 'active-tool' : ''}`}
-                      onClick={() => onToolSelect && onToolSelect(id)}
-                      id={`tool-card-${id}`}
-                    >
-                      <div className="tool-card-icon">
-                        <Icon size={18} />
-                      </div>
-                      <div className="tool-card-title">{label}</div>
-                      <div className="tool-card-sub">{sub}</div>
-                    </button>
-                  ))}
+              {(activePanel !== 'profile' && activePanel !== 'cases') && (
+                <div className="smart-tools-section">
+                  <div className="smart-tools-title">Smart Tools</div>
+                  <div className="smart-tools-grid">
+                    {SMART_TOOLS.map(({ id, label, sub, icon: Icon, color }) => (
+                      <button
+                        key={id}
+                        className={`tool-card ${color} ${activePanel === 'ocr' && id === 'ocr' ? 'active-tool' : ''}`}
+                        onClick={() => onToolSelect && onToolSelect(id)}
+                        id={`tool-card-${id}`}
+                      >
+                        <div className="tool-card-icon">
+                          <Icon size={18} />
+                        </div>
+                        <div className="tool-card-title">{label}</div>
+                        <div className="tool-card-sub">{sub}</div>
+                      </button>
+                    ))}
+                  </div>
                 </div>
-              </div>
+              )}
 
               {/* Lower area: Activity or OCR panel */}
               <div className="dashboard-lower">
-                {/* Main panel — Activity or OCR */}
-                {activePanel === 'ocr' || activePanel === 'processing' || activePanel === 'results' ? (
+                {/* Main panel — Activity or OCR or Profile or Cases */}
+                {activePanel === 'profile' || activePanel === 'cases' ? (
+                  <div className="profile-panel" style={activePanel === 'cases' ? {height: '100%'} : {}}>
+                    {children}
+                  </div>
+                ) : activePanel === 'ocr' || activePanel === 'processing' || activePanel === 'results' ? (
                   <div className="ocr-panel">
                     {/* Back button shown when not on upload */}
                     {(activePanel === 'processing' || activePanel === 'results') && (
@@ -405,40 +405,6 @@ export default function DashboardLayout({ children, activePanel, onToolSelect })
                             </div>
                           );
                         })}
-                      </div>
-                    </div>
-
-                    {/* Stats Panel */}
-                    <div className="stats-panel">
-                      <div className="stats-panel-block">
-                        <div className="stats-label">Total Documents</div>
-                        <div className="stats-value">24</div>
-                      </div>
-                      <div className="stats-divider" />
-                      <div className="stats-panel-block">
-                        <div className="stats-label">Pending Requests</div>
-                        <div className="stats-value">3</div>
-                      </div>
-                      <div className="stats-divider" />
-                      <div className="stats-panel-block">
-                        <div className="stats-label">Tracked Properties</div>
-                        <div className="stats-value">5</div>
-                      </div>
-                      <div className="stats-divider" />
-                      <div>
-                        <div className="stats-chart-title">Property Transaction Trends in Bengaluru</div>
-                        <div className="stats-chart-placeholder">
-                          <div className="stats-chart-bars">
-                            {CHART_BARS.map((h, i) => (
-                              <div
-                                key={i}
-                                className="stats-chart-bar"
-                                style={{ height: `${h}%` }}
-                                title={`Month ${i + 1}`}
-                              />
-                            ))}
-                          </div>
-                        </div>
                       </div>
                     </div>
                   </>
