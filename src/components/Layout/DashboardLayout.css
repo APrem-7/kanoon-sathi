@@ -660,6 +660,7 @@
 .tool-card.blue { color: #2563eb; }
 .tool-card.blue .tool-card-icon { background: #dbeafe; }
 .tool-card.blue:hover { background: #eff6ff; }
+.tool-card.blue.active-tool { background: #eff6ff; border-color: #2563eb; }
 
 .tool-card.purple { color: #7c3aed; }
 .tool-card.purple .tool-card-icon { background: #ede9fe; }
@@ -707,6 +708,11 @@
   flex: 1;
   min-height: 0;
   overflow: hidden;
+}
+
+.smart-tool-panel {
+  min-height: 0;
+  overflow-y: auto;
 }
 
 /* Activity Panel */

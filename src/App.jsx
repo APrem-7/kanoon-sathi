@@ -11,6 +11,7 @@ import EntitiesView from './components/OCRResult/EntitiesView';
 import AnomaliesView from './components/OCRResult/AnomaliesView';
 import MyProfile from './components/Profile/MyProfile';
 import MyCases from './components/Cases/MyCases';
+import StampDutyCalculator from './components/StampDuty/StampDutyCalculator';
 import { analyzeDocument } from './api/client';
 import { FileText, Network, Calendar, Database, AlignLeft, MapPin, AlertTriangle } from 'lucide-react';
 import './index.css';
@@ -109,6 +110,9 @@ function App() {
     if (toolId === 'ocr') {
       setDashboardPanel('ocr');
       setCurrentView('upload'); // always start fresh at upload step
+    } else if (toolId === 'stamp-duty') {
+      setDashboardPanel('stamp-duty');
+      setCurrentView('upload');
     } else if (toolId === 'back') {
       handleReset();
     } else {
@@ -123,6 +127,8 @@ function App() {
     activePanelForLayout = currentView;
   } else if (dashboardPanel === 'ocr' || currentView === 'processing' || currentView === 'results') {
     activePanelForLayout = currentView === 'upload' ? 'ocr' : currentView;
+  } else if (dashboardPanel === 'stamp-duty') {
+    activePanelForLayout = 'stamp-duty';
   }
 
   const isMultiProperty = propertiesList.length > 1;
@@ -140,6 +146,10 @@ function App() {
       onProfileSelect={() => setCurrentView('profile')}
       onCasesSelect={() => setCurrentView('cases')}
     >
+      {currentView === 'upload' && dashboardPanel === 'stamp-duty' && (
+        <StampDutyCalculator />
+      )}
+
       {/* ── Upload View ─────────────────────────────────────────────────── */}
       {currentView === 'upload' && dashboardPanel === 'ocr' && (
         <UploadZone onUploadSuccess={handleUploadSuccess} />
