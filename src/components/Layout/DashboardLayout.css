@@ -46,9 +46,9 @@
 
 /* Logo image */
 .sidebar-logo-img {
-  width: 36px;
-  height: 36px;
-  border-radius: 6px;
+  width: var(--brand-logo-size);
+  height: var(--brand-logo-size);
+  border-radius: 50%;
   object-fit: contain;
   flex-shrink: 0;
   display: block;

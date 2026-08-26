@@ -159,7 +159,7 @@ export default function DashboardLayout({ children, activePanel, onToolSelect, o
         {/* Logo */}
         <div className="sidebar-logo">
           <img
-            src="/kanoon-logo.png"
+            src="/Kanoon_Saathi-logo-1.png"
             alt="Kanoon Saathi Logo"
             className="sidebar-logo-img"
           />

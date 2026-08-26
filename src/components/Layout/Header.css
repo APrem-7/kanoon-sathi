@@ -21,14 +21,12 @@
 }
 
 .header-logo {
-  width: 42px;
-  height: 42px;
+  width: var(--brand-logo-size);
+  height: var(--brand-logo-size);
   display: flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(135deg, var(--color-accent), var(--color-accent-dark));
-  border-radius: var(--radius-md);
-  box-shadow: var(--shadow-accent);
+  border-radius: 50%;
   transition: transform var(--transition-spring);
 }
 
@@ -36,10 +34,11 @@
   transform: scale(1.08) rotate(-3deg);
 }
 
-.header-logo svg {
-  width: 24px;
-  height: 24px;
-  color: var(--color-bg-primary);
+.header-logo img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  border-radius: 50%;
 }
 
 .header-title {
