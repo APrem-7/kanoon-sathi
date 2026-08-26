@@ -1,0 +1,122 @@
+.stamp-duty-view {
+  min-height: 100%;
+  padding: 24px;
+  background:
+    radial-gradient(circle at 92% 0, rgba(217, 119, 6, .1), transparent 280px),
+    linear-gradient(180deg, #fffdf7, #faf6ee);
+}
+
+.stamp-duty-hero {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 24px;
+  max-width: 1050px;
+  margin: 0 auto 20px;
+}
+
+.stamp-duty-eyebrow {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: #b45309;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+
+.stamp-duty-hero h2 {
+  margin-top: 7px;
+  font-family: var(--font-display);
+  font-size: clamp(24px, 3vw, 35px);
+  line-height: 1.1;
+  letter-spacing: -.035em;
+}
+
+.stamp-duty-hero h2 span { color: #b45309; }
+.stamp-duty-hero > div > p { margin-top: 7px; color: #6c7e8f; font-size: 12px; }
+.stamp-duty-trust { display: flex; align-items: center; gap: 9px; padding: 10px 13px; color: #237845; border: 1px solid rgba(35, 120, 69, .18); border-radius: 9px; background: rgba(255,255,255,.75); }
+.stamp-duty-trust span { display: grid; font-size: 9px; line-height: 1.4; color: #6c7e8f; }
+.stamp-duty-trust strong { font-size: 10px; color: #237845; }
+
+.stamp-duty-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.5fr) minmax(280px, .72fr);
+  gap: 16px;
+  max-width: 1050px;
+  margin: 0 auto;
+  align-items: start;
+}
+
+.stamp-duty-form, .stamp-duty-result {
+  overflow: hidden;
+  border: 1px solid rgba(217, 119, 6, .16);
+  border-radius: 13px;
+  background: #fff;
+  box-shadow: 0 10px 28px rgba(146, 64, 14, .06);
+}
+
+.stamp-duty-form { padding: 22px; }
+.stamp-duty-card-title { display: flex; align-items: flex-start; gap: 11px; margin-bottom: 18px; }
+.stamp-duty-card-title > span { width: 29px; height: 29px; display: grid; place-items: center; flex: 0 0 auto; color: #b45309; border-radius: 7px; background: #fef3c7; font-size: 10px; font-weight: 800; }
+.stamp-duty-card-title h3 { font-size: 14px; line-height: 1.3; }
+.stamp-duty-card-title p { margin-top: 2px; color: #6c7e8f; font-size: 10px; }
+.stamp-duty-fields { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 15px; }
+.stamp-duty-form label, .stamp-duty-form legend { color: #3f4e5e; font-size: 10.5px; font-weight: 650; }
+.stamp-duty-form select, .stamp-duty-form input { width: 100%; height: 39px; margin-top: 6px; padding: 0 11px; color: #0f172a; border: 1px solid #e2e8f0; border-radius: 7px; outline: none; background: #fbfcfd; font-size: 11px; transition: border-color .15s, box-shadow .15s; }
+.stamp-duty-form select:focus, .stamp-duty-form input:focus { border-color: #d97706; box-shadow: 0 0 0 3px rgba(217, 119, 6, .1); background: #fff; }
+.stamp-duty-form label > small, .stamp-duty-buyer > small { display: block; margin-top: 4px; color: #8b99a8; font-size: 8.5px; font-weight: 400; line-height: 1.35; }
+.stamp-duty-input-icon { position: relative; display: block; }
+.stamp-duty-input-icon svg { position: absolute; z-index: 1; left: 11px; top: 18px; color: #9aa7b5; }
+.stamp-duty-input-icon input { padding-left: 33px; }
+.stamp-duty-buyer { margin: 17px 0; border: 0; }
+.stamp-duty-buyer legend { margin-bottom: 6px; }
+.stamp-duty-buyer > div { display: grid; grid-template-columns: repeat(3, 1fr); gap: 5px; padding: 4px; border: 1px solid #e2e8f0; border-radius: 8px; background: #f8fafc; }
+.stamp-duty-buyer label { height: 32px; display: grid; place-items: center; color: #6c7e8f; border-radius: 5px; cursor: pointer; }
+.stamp-duty-buyer input { position: absolute; opacity: 0; pointer-events: none; }
+.stamp-duty-buyer label.selected { color: #92400e; background: #fff; box-shadow: 0 1px 4px rgba(15,23,42,.1); }
+.stamp-duty-actions { display: flex; justify-content: flex-end; gap: 8px; margin-top: 19px; padding-top: 16px; border-top: 1px solid #f0eadf; }
+.stamp-duty-actions button { height: 38px; display: flex; align-items: center; justify-content: center; gap: 7px; padding: 0 14px; border-radius: 7px; font-size: 10.5px; font-weight: 700; }
+.stamp-duty-reset { color: #6c7e8f; border: 1px solid #e2e8f0; background: #fff; }
+.stamp-duty-submit { min-width: 184px; color: #fff; background: linear-gradient(135deg, #d97706, #b45309); box-shadow: 0 4px 12px rgba(180,83,9,.2); }
+.stamp-duty-submit:hover { background: linear-gradient(135deg, #b45309, #92400e); }
+
+.stamp-duty-result { position: sticky; top: 16px; }
+.stamp-duty-empty { min-height: 282px; padding: 70px 28px 28px; text-align: center; }
+.stamp-duty-empty > span { width: 48px; height: 48px; display: grid; place-items: center; margin: 0 auto 14px; color: #b45309; border-radius: 13px; background: #fef3c7; }
+.stamp-duty-empty h3 { font-size: 13px; }
+.stamp-duty-empty p { max-width: 240px; margin: 6px auto; color: #6c7e8f; font-size: 10px; line-height: 1.5; }
+.stamp-duty-result-heading { display: flex; align-items: center; gap: 10px; padding: 20px 20px 14px; }
+.stamp-duty-result-heading > span { width: 39px; height: 39px; display: grid; place-items: center; color: #fff; border-radius: 10px; background: #d97706; }
+.stamp-duty-result-heading small, .stamp-duty-result-heading strong { display: block; }
+.stamp-duty-result-heading small { color: #6c7e8f; font-size: 9px; }
+.stamp-duty-result-heading strong { font-size: 20px; letter-spacing: -.04em; }
+.stamp-duty-total { margin: 0 20px 14px; padding: 15px; color: #fff; border-radius: 9px; background: linear-gradient(135deg, #92400e, #d97706); }
+.stamp-duty-total span, .stamp-duty-total strong, .stamp-duty-total small { display: block; }
+.stamp-duty-total span { font-size: 8.5px; opacity: .8; }
+.stamp-duty-total strong { margin: 3px 0; font-size: 21px; letter-spacing: -.04em; }
+.stamp-duty-total small { font-size: 8.5px; opacity: .75; }
+.stamp-duty-breakdown { margin: 0 20px 14px; }
+.stamp-duty-breakdown div { display: flex; justify-content: space-between; gap: 12px; padding: 9px 0; border-bottom: 1px solid #f0eadf; font-size: 9.5px; }
+.stamp-duty-breakdown dt { color: #6c7e8f; }
+.stamp-duty-breakdown dd { color: #0f172a; font-weight: 700; }
+.stamp-duty-ready { margin: 0 20px 16px; padding: 9px 10px; display: flex; align-items: center; gap: 7px; color: #237845; border: 1px solid rgba(35,120,69,.2); border-radius: 7px; background: rgba(35,120,69,.06); font-size: 9.5px; font-weight: 600; }
+.stamp-duty-note { display: flex; gap: 7px; padding: 13px 16px; color: #6c7e8f; border-top: 1px solid #f0eadf; background: #fffdf7; font-size: 8.5px; line-height: 1.5; }
+.stamp-duty-note svg { flex: 0 0 auto; color: #b45309; }
+.stamp-duty-note strong { color: #3f4e5e; }
+.stamp-duty-result > a { display: block; padding: 0 16px 13px; color: #b45309; background: #fffdf7; font-size: 8.5px; font-weight: 650; }
+
+@media (max-width: 850px) {
+  .stamp-duty-grid { grid-template-columns: 1fr; }
+  .stamp-duty-result { position: static; }
+}
+
+@media (max-width: 600px) {
+  .stamp-duty-view { padding: 16px; }
+  .stamp-duty-trust { display: none; }
+  .stamp-duty-fields { grid-template-columns: 1fr; }
+  .stamp-duty-buyer > div { grid-template-columns: 1fr; }
+  .stamp-duty-actions { flex-direction: column-reverse; }
+  .stamp-duty-actions button { width: 100%; }
+}

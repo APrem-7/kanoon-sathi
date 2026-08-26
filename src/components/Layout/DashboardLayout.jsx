@@ -345,7 +345,7 @@ export default function DashboardLayout({ children, activePanel, onToolSelect, o
                     {SMART_TOOLS.map(({ id, label, sub, icon: Icon, color }) => (
                       <button
                         key={id}
-                        className={`tool-card ${color} ${activePanel === 'ocr' && id === 'ocr' ? 'active-tool' : ''}`}
+                        className={`tool-card ${color} ${activePanel === id ? 'active-tool' : ''}`}
                         onClick={() => onToolSelect && onToolSelect(id)}
                         id={`tool-card-${id}`}
                       >
@@ -367,8 +367,8 @@ export default function DashboardLayout({ children, activePanel, onToolSelect, o
                   <div className="profile-panel" style={activePanel === 'cases' ? {height: '100%'} : {}}>
                     {children}
                   </div>
-                ) : activePanel === 'ocr' || activePanel === 'processing' || activePanel === 'results' ? (
-                  <div className="ocr-panel">
+                ) : activePanel === 'ocr' || activePanel === 'processing' || activePanel === 'results' || activePanel === 'stamp-duty' ? (
+                  <div className={activePanel === 'stamp-duty' ? 'smart-tool-panel' : 'ocr-panel'}>
                     {/* Back button shown when not on upload */}
                     {(activePanel === 'processing' || activePanel === 'results') && (
                       <button className="ocr-panel-back" onClick={() => onToolSelect && onToolSelect('back')}>
