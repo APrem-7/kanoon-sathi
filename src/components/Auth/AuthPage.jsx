@@ -46,7 +46,7 @@ function AuthHeader() {
 
       {/* Logo */}
       <div className="auth-logo-wrap">
-        <img src="/kanoon-logo.png" alt="Kanoon Saathi" className="auth-logo-img" />
+        <img src="/Kanoon_Saathi-logo-1.png" alt="Kanoon Saathi" className="auth-logo-img" />
       </div>
 
       <div className="auth-brand-name">Kanoon Saathi</div>

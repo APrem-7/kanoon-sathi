@@ -115,8 +115,8 @@
 }
 
 .auth-logo-wrap {
-  width: 70px;
-  height: 70px;
+  width: 84px;
+  height: 84px;
   background: transparent;
   border: none;
   box-shadow: none;
@@ -129,10 +129,10 @@
 }
 
 .auth-logo-img {
-  width: 70px;
-  height: 70px;
-  object-fit: cover;
-  mix-blend-mode: multiply;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  border-radius: 50%;
   background: transparent;
 }
 
