@@ -16,12 +16,13 @@ export const store = {
     return job;
   },
 
-  updateJobStatus(serialNo, status, text = null) {
+  updateJobStatus(serialNo, status, text = null, error = null) {
     const job = jobs.get(serialNo);
     if (job) {
       job.status = status;
       job.updatedAt = new Date().toISOString();
       if (text) job.text = text;
+      if (error) job.error = error;
       jobs.set(serialNo, job);
     }
     return job;

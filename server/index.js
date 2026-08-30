@@ -6,10 +6,14 @@ import { S3Client, GetObjectCommand, ListObjectsV2Command } from '@aws-sdk/clien
 import { DynamoDBClient, ListTablesCommand } from '@aws-sdk/client-dynamodb';
 import { DynamoDBDocumentClient, ScanCommand } from '@aws-sdk/lib-dynamodb';
 import { store } from './store.js';
-import { analyzeLegalDocument } from './gemini.js';
+import { analyzeLegalDocument } from './gemini.js'; // was ./cerebras.js — switched providers since .env now carries GEMINI_API_KEY, not CEREBRAS_API_KEY
 
 const app = express();
-const PORT = 3001;
+// Render (and most host platforms) assign the port dynamically via this
+// env var and expect the app to bind to it — hardcoding 3001 would fail
+// to bind to whatever port the platform actually routes traffic to.
+// Local dev has no PORT set, so it falls back to 3001 same as before.
+const PORT = process.env.PORT || 3001;
 const upload = multer({ storage: multer.memoryStorage() });
 
 // AWS API Gateway endpoint for upload
@@ -44,6 +48,30 @@ const dynamo = DynamoDBDocumentClient.from(new DynamoDBClient(awsConfig));
     console.error('  ❌ Set AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY in .env\n');
   }
 })();
+
+// AWS auth failures are a config problem, not a transient one — retrying
+// won't fix them. Detecting this specifically lets the polling loop below
+// fail in a few seconds with a clear reason instead of silently retrying
+// for 5 minutes. Two distinct failure shapes both land here:
+//   - missing credentials entirely: err.name "CredentialsProviderError",
+//     message "Could not load credentials from any providers"
+//   - credentials present but rejected by AWS: err.name typically
+//     "UnrecognizedClientException" / "InvalidClientTokenId" /
+//     "ExpiredTokenException", message "The security token included in
+//     the request is invalid." (a bad/deactivated/mismatched key pair)
+const CREDENTIALS_HELP =
+  'AWS credentials in .env are missing or invalid — verify AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY are Active in the AWS IAM console (generate a fresh pair if unsure), update .env at the project root, and restart the backend.';
+
+function isCredentialsError(err) {
+  const name = err?.name || '';
+  const message = err?.message || '';
+  return (
+    /credential/i.test(name) ||
+    /credential/i.test(message) ||
+    /security token/i.test(message) ||
+    /InvalidClientTokenId|UnrecognizedClientException|ExpiredToken|AccessDenied|NotAuthorized/i.test(name)
+  );
+}
 
 app.use(cors());
 app.use(express.json());
@@ -128,8 +156,7 @@ app.post('/api/analyze', async (req, res) => {
 
     console.log(`[ANALYZE] Received request with text length=${text.length}`);
     const structuredData = await analyzeLegalDocument(text);
-    const propCount = structuredData.properties?.length || 0;
-    console.log(`[ANALYZE] Success: ${propCount} property group(s) | ${JSON.stringify(structuredData).substring(0, 150)}...`);
+    console.log(`[ANALYZE] Success: ${JSON.stringify(structuredData).substring(0, 100)}...`);
 
     return res.json(structuredData);
   } catch (error) {
@@ -207,6 +234,15 @@ app.get('/api/jobs/:serialNo', async (req, res) => {
       }
     } catch (e) {
       console.error(`[GET /api/jobs/${serialNo}] DynamoDB live-check error:`, e.message);
+
+      // Same reasoning as pollDynamoForResult: this endpoint is polled
+      // every few seconds by the frontend while status stays "processing" —
+      // without this, a broken credentials config means every single poll
+      // re-hits DynamoDB and fails identically, forever, instead of
+      // surfacing the real problem once.
+      if (isCredentialsError(e)) {
+        job = store.updateJobStatus(serialNo, 'failed', null, CREDENTIALS_HELP);
+      }
     }
   }
 
@@ -327,11 +363,18 @@ async function pollDynamoForResult(serialNo) {
 
     } catch (err) {
       console.error(`[DYNAMO POLL] Error on attempt ${attempts} | serialNo=${serialNo} | ${err.message}`);
+
+      if (isCredentialsError(err)) {
+        console.error(`[DYNAMO POLL] ❌ AWS credentials error — stopping immediately instead of retrying for 5 minutes | serialNo=${serialNo}`);
+        store.updateJobStatus(serialNo, 'failed', null, CREDENTIALS_HELP);
+        clearInterval(interval);
+        return;
+      }
     }
 
     if (attempts >= MAX_ATTEMPTS) {
       console.error(`[DYNAMO POLL] TIMEOUT after ${MAX_ATTEMPTS} attempts | serialNo=${serialNo}`);
-      store.updateJobStatus(serialNo, 'failed');
+      store.updateJobStatus(serialNo, 'failed', null, 'OCR processing timed out after 5 minutes. The document may still be processing — check back later or re-upload.');
       clearInterval(interval);
     }
   }, 5000);
