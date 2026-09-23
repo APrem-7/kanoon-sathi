@@ -4,10 +4,7 @@ import {
   MessageSquare,
   Briefcase,
   User,
-  Home,
-  FileText,
   Search,
-  Users,
   ChevronDown,
   MapPin,
   Upload,
@@ -15,31 +12,13 @@ import {
   UserCheck,
   Bell,
   FileCheck2,
-  BookOpen,
-  Map,
   ClipboardList,
-  CreditCard,
   Gavel,
-  Copy,
-  ArrowRightLeft,
   LogOut,
   Settings,
 } from 'lucide-react';
 import './DashboardLayout.css';
 import AiChatView from './AiChatView';
-
-// ─── Karnataka State Services ───────────────────────────────────────────────
-const KARNATAKA_SERVICES = [
-  { id: 'ec', label: 'Encumbrance Certificate (EC) 2024', icon: FileCheck2, badge: null, hasChevron: true },
-  { id: 'rtc', label: 'View RTC (Pahani)', icon: BookOpen, badge: '13', hasChevron: false },
-  { id: 'search-survey', label: 'Search Property by Survey No.', icon: Search, badge: null, hasChevron: false },
-  { id: 'survey-no', label: 'Find My Survey Number', icon: MapPin, badge: null, hasChevron: false },
-  { id: 'khata', label: 'Karnataka Khata Transfer Status', icon: ArrowRightLeft, badge: null, hasChevron: false },
-  { id: 'e-aasthi', label: 'E-Aasthi Property Card', icon: CreditCard, badge: null, hasChevron: false },
-  { id: 'court', label: 'Revenue Court Case Status', icon: Gavel, badge: null, hasChevron: false },
-  { id: 'sale-copy', label: 'Certified Copy of Sale Deeds', icon: Copy, badge: null, hasChevron: false },
-  { id: 'conversion', label: 'Land Conversion Status', icon: Map, badge: null, hasChevron: false },
-];
 
 // ─── Indian States for dropdown ─────────────────────────────────────────────
 const STATES = ['DELHI', 'MAHARASHTRA', 'TELANGANA', 'KARNATAKA'];
@@ -128,7 +107,6 @@ export default function DashboardLayout({ children, activePanel, onToolSelect, o
   const [stateDropdownOpen, setStateDropdownOpen] = useState(false);
   const [userDropdownOpen, setUserDropdownOpen] = useState(false);
   const [activeNavItem, setActiveNavItem] = useState('dashboard');
-  const [activeTopLink, setActiveTopLink] = useState('home');
 
   const stateRef = useRef(null);
   const userRef = useRef(null);
@@ -194,53 +172,12 @@ export default function DashboardLayout({ children, activePanel, onToolSelect, o
             </button>
           ))}
         </nav>
-
-        {/* Karnataka State Services */}
-        <div className="sidebar-services">
-          <div className="sidebar-services-header">{selectedState.replace(/\s*\(.*?\)/, '')} State Services</div>
-          <div className="sidebar-services-list">
-            {KARNATAKA_SERVICES.map(({ id, label, icon: Icon, badge, hasChevron }) => (
-              <button
-                key={id}
-                className="sidebar-service-item"
-                id={`service-${id}`}
-              >
-                <span className="sidebar-service-item-left">
-                  <span className="sidebar-service-icon">
-                    <Icon size={13} color="#3f4e5e" />
-                  </span>
-                  <span>{label}</span>
-                </span>
-                {badge && <span className="sidebar-service-badge">{badge}</span>}
-                {hasChevron && !badge && <ChevronDown size={12} color="#a8b4c0" />}
-              </button>
-            ))}
-          </div>
-        </div>
       </aside>
 
       {/* ══ MAIN COLUMN ═══════════════════════════════════════════════════ */}
       <div className="dashboard-main">
         {/* ── TOP NAVIGATION BAR ─────────────────────────────────────────── */}
         <header className="dashboard-topnav" id="app-topnav">
-          <nav className="topnav-links">
-            {[
-              { id: 'home', label: 'Home', Icon: Home },
-              { id: 'my-documents', label: 'My Documents', Icon: FileText },
-              { id: 'legal-search', label: 'Legal Search', Icon: Search },
-              { id: 'consultations', label: 'Consultations', Icon: Users },
-            ].map(({ id, label, Icon }) => (
-              <button
-                key={id}
-                className={`topnav-link ${activeTopLink === id ? 'active' : ''}`}
-                onClick={() => setActiveTopLink(id)}
-                id={`topnav-${id}`}
-              >
-                <Icon size={15} />
-                {label}
-              </button>
-            ))}
-          </nav>
 
           {/* Right cluster */}
           <div className="topnav-right">
