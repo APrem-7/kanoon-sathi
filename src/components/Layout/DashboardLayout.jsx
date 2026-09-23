@@ -16,17 +16,9 @@ import {
   Gavel,
   LogOut,
   Settings,
-  Lightbulb,
 } from 'lucide-react';
 import './DashboardLayout.css';
 import AiChatView from './AiChatView';
-
-// ─── Summary Overview Stats ──────────────────────────────────────────────────
-const SUMMARY_STATS = [
-  { id: 'cases', label: 'Active Cases', value: '4', sub: '2 Court · 2 Dispute', icon: Briefcase, color: 'blue' },
-  { id: 'docs', label: 'Documents Tracked', value: '12', sub: '3 ECs · 5 Sale Deeds', icon: FileCheck2, color: 'green' },
-  { id: 'alerts', label: 'Pending Alerts', value: '3', sub: '1 Hearing · 2 Searches', icon: Bell, color: 'orange' },
-];
 
 // ─── Indian States for dropdown ─────────────────────────────────────────────
 const STATES = ['DELHI', 'MAHARASHTRA', 'TELANGANA', 'KARNATAKA'];
@@ -327,75 +319,27 @@ export default function DashboardLayout({ children, activePanel, onToolSelect, o
                     {children}
                   </div>
                 ) : (
-                  <div className="dashboard-overview-container">
-                    {/* Summary Stats Row */}
-                    <div className="summary-stats-grid">
-                      {SUMMARY_STATS.map(({ id, label, value, sub, icon: Icon, color }) => (
-                        <div key={id} className={`summary-stat-card ${color}`}>
-                          <div className="summary-stat-header">
-                            <span className="summary-stat-label">{label}</span>
-                            <div className={`summary-stat-icon ${color}`}>
+                  <div className="activity-panel">
+                    <div className="activity-panel-title">Recent Activity &amp; Alerts</div>
+                    <div className="activity-list">
+                      {ACTIVITY_DATA.map((item) => {
+                        const Icon = item.icon;
+                        return (
+                          <div key={item.id} className="activity-item">
+                            <div className={`activity-item-icon ${item.iconClass}`}>
                               <Icon size={16} />
                             </div>
-                          </div>
-                          <div className="summary-stat-value">{value}</div>
-                          <div className="summary-stat-sub">{sub}</div>
-                        </div>
-                      ))}
-                    </div>
-
-                    <div className="dashboard-content-split">
-                      {/* Recent Activity Panel */}
-                      <div className="activity-panel">
-                        <div className="activity-panel-title">Recent Activity &amp; Alerts</div>
-                        <div className="activity-list">
-                          {ACTIVITY_DATA.map((item) => {
-                            const Icon = item.icon;
-                            return (
-                              <div key={item.id} className="activity-item">
-                                <div className={`activity-item-icon ${item.iconClass}`}>
-                                  <Icon size={16} />
-                                </div>
-                                <div className="activity-item-body">
-                                  <div className="activity-item-title">
-                                    {item.title}
-                                    {item.link && <a href="#">{item.link}</a>}
-                                  </div>
-                                  <div className="activity-item-desc">{item.desc}</div>
-                                </div>
-                                <div className="activity-item-time">{item.time}</div>
+                            <div className="activity-item-body">
+                              <div className="activity-item-title">
+                                {item.title}
+                                {item.link && <a href="#">{item.link}</a>}
                               </div>
-                            );
-                          })}
-                        </div>
-                      </div>
-
-                      {/* Quick Legal Insights & Tips Panel */}
-                      <div className="quick-tips-panel">
-                        <div className="quick-tips-title">
-                          <Lightbulb size={16} color="#d97706" /> Legal Insights &amp; Tips
-                        </div>
-                        <div className="quick-tips-list">
-                          <div className="quick-tip-card">
-                            <div className="quick-tip-header">
-                              <span className="quick-tip-tag">Bhoomi Verification</span>
+                              <div className="activity-item-desc">{item.desc}</div>
                             </div>
-                            <div className="quick-tip-text">Always cross-verify Survey Numbers with Revenue Court records before completing property transactions.</div>
+                            <div className="activity-item-time">{item.time}</div>
                           </div>
-                          <div className="quick-tip-card">
-                            <div className="quick-tip-header">
-                              <span className="quick-tip-tag">Title Encumbrance</span>
-                            </div>
-                            <div className="quick-tip-text">Fetch Encumbrance Certificates (EC) for a minimum 13 to 30 year period for clear property title history.</div>
-                          </div>
-                          <div className="quick-tip-card">
-                            <div className="quick-tip-header">
-                              <span className="quick-tip-tag">Deed Registration</span>
-                            </div>
-                            <div className="quick-tip-text">Ensure local state stamp duty calculations match updated government guidance before filing.</div>
-                          </div>
-                        </div>
-                      </div>
+                        );
+                      })}
                     </div>
                   </div>
                 )}
